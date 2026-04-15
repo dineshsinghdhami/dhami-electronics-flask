@@ -1,0 +1,642 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Fix for footer positioning - NO extra spaces */
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    
+    .main-content {
+        flex: 1 0 auto;
+        display: flex;
+        flex-direction: column;
+        margin-top: 70px; /* Add space for fixed navbar */
+    }
+    
+    .main-content .container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding-left: 0;
+        padding-right: 0;
+        margin: 0;
+        width: 100%;
+        min-height: auto;
+    }
+    
+    /* Make content area flexible to push footer down */
+    .content-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(135deg, #f6f9fc 0%, #eef2f5 100%);
+        padding: 20px 0 0 0;
+        margin-bottom: 0;
+    }
+    
+    /* Orders card takes remaining space */
+    .orders-card {
+        flex: 1;
+        background: var(--white);
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+        margin: 0 20px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* Table container should be scrollable if needed */
+    .table-container {
+        overflow-x: auto;
+        flex: 1;
+    }
+    
+    /* Empty state takes full height */
+    .empty-state {
+        flex: 1;
+        text-align: center;
+        padding: 60px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 400px;
+    }
+    
+    /* Footer stays at bottom */
+    .footer {
+        background-color: #18282b;
+        color: #ffffff;
+        width: 100%;
+        flex-shrink: 0;
+        margin-top: 0;
+        padding: 0;
+        position: relative;
+        z-index: 1;
+    }
+    
+    :root {
+        --primary: #2874f0;
+        --secondary: #fb641b;
+        --dark: #212121;
+        --light: #f5f5f5;
+        --gray: #878787;
+        --white: #ffffff;
+    }
+    
+    /* Section Header */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 0 20px;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 0;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 0;
+        position: relative;
+        padding-left: 12px;
+    }
+    
+    .section-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 18px;
+        background: #E66239;
+        border-radius: 2px;
+    }
+    
+    /* Stats Row */
+    .stats-row {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        padding: 0 20px;
+    }
+    
+    .stat-chip {
+        background: white;
+        border-radius: 2rem;
+        padding: 6px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid #e2e8f0;
+        font-size: 0.75rem;
+    }
+    
+    .stat-chip i {
+        font-size: 0.8rem;
+    }
+    
+    .stat-chip .count {
+        font-weight: 700;
+        color: var(--dark);
+        margin-left: 4px;
+    }
+    
+    .stat-chip.pending i { color: #d97706; }
+    .stat-chip.processing i { color: #0284c7; }
+    .stat-chip.shipped i { color: #64748b; }
+    .stat-chip.delivered i { color: #10b981; }
+    .stat-chip.cancelled i { color: #dc2626; }
+    
+    /* Card Header */
+    .card-header-custom {
+        padding: 14px 20px;
+        background: #fafcff;
+        border-bottom: 1px solid #e2e8f0;
+        flex-shrink: 0;
+    }
+    
+    .card-header-custom h3 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .card-header-custom h3 i {
+        color: #E66239;
+    }
+    
+    /* Orders Table */
+    .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.75rem;
+    }
+    
+    .orders-table th {
+        text-align: left;
+        padding: 14px 16px;
+        background: #f8fafc;
+        font-weight: 600;
+        color: var(--dark);
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .orders-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #e2e8f0;
+        color: var(--gray);
+        vertical-align: middle;
+    }
+    
+    .orders-table tr:hover td {
+        background: #fafcff;
+    }
+    
+    /* Order ID */
+    .order-id {
+        font-weight: 600;
+        color: var(--dark);
+    }
+    
+    /* Customer Info */
+    .customer-name {
+        font-weight: 500;
+        color: var(--dark);
+        margin-bottom: 2px;
+    }
+    
+    .customer-email {
+        font-size: 0.65rem;
+        color: var(--gray);
+    }
+    
+    /* Amount */
+    .amount {
+        font-weight: 600;
+        color: #E66239;
+    }
+    
+    /* Status Select */
+    .status-select {
+        padding: 6px 12px;
+        border-radius: 2rem;
+        font-size: 0.7rem;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        background: #f1f5f9;
+        color: var(--dark);
+        min-width: 110px;
+        text-align: center;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        padding-right: 28px;
+    }
+    
+    .status-select.pending {
+        background-color: #fef3c7;
+        color: #d97706;
+    }
+    
+    .status-select.processing {
+        background-color: #e0f2fe;
+        color: #0284c7;
+    }
+    
+    .status-select.shipped {
+        background-color: #f1f5f9;
+        color: #475569;
+    }
+    
+    .status-select.delivered {
+        background-color: #ecfdf5;
+        color: #10b981;
+    }
+    
+    .status-select.cancelled {
+        background-color: #fef2f2;
+        color: #dc2626;
+    }
+    
+    /* View Button */
+    .view-btn {
+        padding: 6px 12px;
+        border-radius: 2rem;
+        font-size: 0.65rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: transparent;
+        border: 1px solid #e2e8f0;
+        color: var(--gray);
+        transition: all 0.2s;
+    }
+    
+    .view-btn:hover {
+        border-color: #E66239;
+        color: #E66239;
+        text-decoration: none;
+    }
+    
+    /* Empty State */
+    .empty-state i {
+        font-size: 3rem;
+        color: #cbd5e1;
+        margin-bottom: 16px;
+    }
+    
+    .empty-state h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 8px;
+    }
+    
+    .empty-state p {
+        font-size: 0.75rem;
+        color: #94a3b8;
+    }
+    
+    /* Footer */
+    .footer .footer-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 15px 20px 12px 20px;
+    }
+    
+    .footer h5 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+    
+    .footer p {
+        font-size: 0.7rem;
+        margin-bottom: 4px;
+        line-height: 1.4;
+        opacity: 0.8;
+    }
+    
+    .footer ul {
+        margin-bottom: 0;
+        padding-left: 0;
+    }
+    
+    .footer ul li {
+        margin-bottom: 4px;
+        list-style: none;
+    }
+    
+    .footer ul li a {
+        font-size: 0.7rem;
+        color: #a0a0a0;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+    
+    .footer ul li a:hover {
+        color: #f39c12;
+        padding-left: 3px;
+    }
+    
+    .footer .social-links {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    
+    .footer .social-icon {
+        width: 28px;
+        height: 28px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        color: white;
+        text-decoration: none;
+        font-size: 0.8rem;
+    }
+    
+    .footer .social-icon:hover {
+        background: #f39c12;
+        transform: translateY(-2px);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .main-content {
+            margin-top: 60px;
+        }
+        
+        .section-header {
+            padding: 0 15px;
+        }
+        
+        .stats-row {
+            padding: 0 15px;
+        }
+        
+        .orders-card {
+            margin: 0 15px;
+        }
+        
+        .orders-table th,
+        .orders-table td {
+            padding: 10px 12px;
+        }
+        
+        .status-select {
+            min-width: 95px;
+            font-size: 0.65rem;
+            padding: 5px 10px;
+            padding-right: 24px;
+        }
+        
+        .view-btn {
+            padding: 4px 10px;
+            font-size: 0.6rem;
+        }
+        
+        .footer .footer-container {
+            padding: 12px 15px 10px 15px;
+        }
+        
+        .footer .col-md-4 {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        
+        .footer .col-md-4:last-child {
+            margin-bottom: 0;
+        }
+        
+        .footer .social-links {
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="content-area">
+    <div class="section-header">
+        <h2 class="section-title">All Orders</h2>
+    </div>
+    
+    {% if orders %}
+    <!-- Status Stats Chips -->
+    <div class="stats-row">
+        <div class="stat-chip pending">
+            <i class="fas fa-clock"></i> Pending <span class="count">{{ orders|selectattr('status', 'equalto', 'pending')|list|length }}</span>
+        </div>
+        <div class="stat-chip processing">
+            <i class="fas fa-spinner fa-pulse"></i> Processing <span class="count">{{ orders|selectattr('status', 'equalto', 'processing')|list|length }}</span>
+        </div>
+        <div class="stat-chip shipped">
+            <i class="fas fa-truck"></i> Shipped <span class="count">{{ orders|selectattr('status', 'equalto', 'shipped')|list|length }}</span>
+        </div>
+        <div class="stat-chip delivered">
+            <i class="fas fa-check-circle"></i> Delivered <span class="count">{{ orders|selectattr('status', 'equalto', 'delivered')|list|length }}</span>
+        </div>
+        <div class="stat-chip cancelled">
+            <i class="fas fa-times-circle"></i> Cancelled <span class="count">{{ orders|selectattr('status', 'equalto', 'cancelled')|list|length }}</span>
+        </div>
+    </div>
+    
+    <div class="orders-card">
+        <div class="card-header-custom">
+            <h3><i class="fas fa-shopping-cart"></i> Order Management</h3>
+        </div>
+        <div class="table-container">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Phone</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>
+                            <span class="order-id">#{{ order.id }}</span>
+                        </td>
+                        <td>
+                            <div class="customer-name">{{ order.user.username }}</div>
+                            <div class="customer-email">{{ order.user.email[:25] }}{% if order.user.email|length > 25 %}...{% endif %}</div>
+                        </td>
+                        <td>{{ order.phone or '—' }}</td>
+                        <td>
+                            <span class="amount">NPR {{ "%.0f"|format(order.total_amount) }}</span>
+                        </td>
+                        <td>
+                            <select class="status-select {{ order.status|lower }}" data-order-id="{{ order.id }}">
+                                <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>⏳ Pending</option>
+                                <option value="processing" {% if order.status == 'processing' %}selected{% endif %}>⚙️ Processing</option>
+                                <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>🚚 Shipped</option>
+                                <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>✅ Delivered</option>
+                                <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>❌ Cancelled</option>
+                            </select>
+                        </td>
+                        <td>{{ order.created_at.strftime('%b %d, %Y') }}<br><small class="customer-email">{{ order.created_at.strftime('%H:%M') }}</small></td>
+                        <td>
+                            <a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="view-btn">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="orders-card">
+        <div class="empty-state">
+            <i class="fas fa-shopping-cart"></i>
+            <h3>No Orders Yet</h3>
+            <p>Orders will appear here when customers make purchases.</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Dhami Electronics</h5>
+                <p>Your one-stop shop for premium electronics.</p>
+                <p><i class="fas fa-map-marker-alt me-1"></i> Dhangadhi, Nepal</p>
+                <p><i class="fas fa-envelope me-1"></i> support@dhamielectronics.com</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Quick Links</h5>
+               <ul>
+                        <li><a href="{{ url_for('about') }}">About Us</a></li>
+    <li><a href="{{ url_for('returns_policy') }}">Returns Policy</a></li>
+    <li><a href="{{ url_for('privacy_policy') }}">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Follow Us</h5>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+                <p class="mt-2"><i class="fas fa-truck"></i> Free Shipping on orders above NPR 5000</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add color classes based on status
+    document.querySelectorAll('.status-select').forEach(select => {
+        const status = select.value;
+        select.classList.add(status);
+    });
+    
+    // Handle status change
+    document.querySelectorAll('.status-select').forEach(select => {
+        select.addEventListener('change', function() {
+            const orderId = this.getAttribute('data-order-id');
+            const newStatus = this.value;
+            const selectElement = this;
+            
+            // Show loading state
+            const originalText = selectElement.innerHTML;
+            selectElement.disabled = true;
+            
+            fetch('/admin/update_order_status/' + orderId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({status: newStatus})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update select class
+                    selectElement.classList.remove('pending', 'processing', 'shipped', 'delivered', 'cancelled');
+                    selectElement.classList.add(newStatus);
+                    
+                    // Update status chips count if needed
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Status Updated!',
+                        text: data.message,
+                        confirmButtonColor: '#10b981',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                    
+                    // Optional: Update stats chips by refreshing page or updating counts
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: data.error || 'Failed to update order status',
+                        confirmButtonColor: '#dc2626'
+                    });
+                    // Revert select value
+                    selectElement.value = selectElement.getAttribute('data-old-value') || 'pending';
+                }
+                selectElement.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Something went wrong. Please try again.',
+                    confirmButtonColor: '#dc2626'
+                });
+                selectElement.disabled = false;
+            });
+            
+            // Store current value
+            selectElement.setAttribute('data-old-value', selectElement.value);
+        });
+    });
+});
+</script>
+{% endblock %}

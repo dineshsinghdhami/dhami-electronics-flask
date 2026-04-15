@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h3 class="mb-0">Email Verification Required</h3>
+            </div>
+            <div class="card-body text-center">
+                <i class="fas fa-envelope fa-4x text-warning mb-3"></i>
+                <h4>Verify Your Email Address</h4>
+                <p>Please verify your email address to access all features including:</p>
+                <ul class="text-left">
+                    <li>Adding items to cart</li>
+                    <li>Making purchases</li>
+                    <li>Viewing order history</li>
+                </ul>
+                <p class="text-muted">We've sent a verification link to:</p>
+                <h5 class="text-primary">{{ current_user.email }}</h5>
+                <hr>
+                <button id="sendVerificationBtn" class="btn btn-primary btn-lg">
+                    Send Verification Email
+                </button>
+                <div id="message" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- OTP Modal -->
+<div class="modal fade" id="otpModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Enter OTP</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Enter the 6-digit code sent to your email:</p>
+                <input type="text" id="otpInput" class="form-control form-control-lg text-center" 
+                       maxlength="6" placeholder="000000" style="font-size: 24px; letter-spacing: 5px;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="verifyOtpBtn">Verify</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    $('#sendVerificationBtn').click(function() {
+        $.ajax({
+            url: '/send-verification-email',
+            method: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    $('#message').html('<div class="alert alert-success">' + response.message + '</div>');
+                    $('#otpModal').modal('show');
+                } else {
+                    $('#message').html('<div class="alert alert-danger">' + response.error + '</div>');
+                }
+            },
+            error: function() {
+                $('#message').html('<div class="alert alert-danger">Failed to send verification email</div>');
+            }
+        });
+    });
+    
+    $('#verifyOtpBtn').click(function() {
+        var otp = $('#otpInput').val();
+        $.ajax({
+            url: '/verify-user-otp',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({otp: otp}),
+            success: function(response) {
+                if (response.success) {
+                    $('#message').html('<div class="alert alert-success">' + response.message + '</div>');
+                    setTimeout(function() {
+                        window.location.href = '/';
+                    }, 2000);
+                } else {
+                    $('#message').html('<div class="alert alert-danger">' + response.error + '</div>');
+                }
+            },
+            error: function(response) {
+                var error = response.responseJSON;
+                $('#message').html('<div class="alert alert-danger">' + (error ? error.error : 'Verification failed') + '</div>');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

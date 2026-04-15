@@ -1,0 +1,423 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Hide footer */
+    .footer {
+        display: none !important;
+    }
+    
+    /* Center the form */
+    .verify-wrapper {
+        min-height: calc(100vh - 76px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #f6f9fc 0%, #eef2f5 100%);
+    }
+    
+    /* Modern Card Styling */
+    .verify-card {
+        max-width: 460px;
+        width: 100%;
+        border: none;
+        border-radius: 2rem;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(0px);
+        box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.02);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .verify-card:hover {
+        box-shadow: 0 30px 55px -15px rgba(0, 0, 0, 0.25);
+    }
+    
+    .verify-card .card-body {
+        padding: 2.2rem 2rem !important;
+    }
+    
+    @media (max-width: 480px) {
+        .verify-card .card-body {
+            padding: 1.75rem 1.5rem !important;
+        }
+    }
+    
+    /* Logo & Brand */
+    .logo-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.65rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .logo-svg {
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+    }
+    
+    .brand-text {
+        font-weight: 700;
+        font-size: 1.45rem;
+        letter-spacing: -0.3px;
+        background: linear-gradient(120deg, #302C4D, #4a437a);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+    
+    h1 {
+        font-weight: 600;
+        font-size: 1.6rem;
+        letter-spacing: -0.3px;
+        color: #1a1e2b;
+    }
+    
+    /* Form Labels */
+    .form-label {
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: #2c3e4e;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* OTP Input Styling */
+    .otp-input {
+        border-radius: 1rem;
+        padding: 0.7rem 1rem;
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-align: center;
+        letter-spacing: 8px;
+        border: 1px solid #e2e8f0;
+        background-color: #ffffff;
+        transition: all 0.2s ease;
+        box-shadow: none;
+    }
+    
+    .otp-input:focus {
+        border-color: #E66239;
+        box-shadow: 0 0 0 4px rgba(230, 98, 57, 0.15);
+        outline: none;
+    }
+    
+    /* Primary Button */
+    .btn-verify {
+        background: linear-gradient(105deg, #302C4D 0%, #4c4585 100%);
+        border: none;
+        border-radius: 2rem;
+        padding: 0.75rem 1rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+        letter-spacing: 0.2px;
+        transition: all 0.25s ease;
+        box-shadow: 0 8px 18px rgba(48, 44, 77, 0.2);
+        color: white;
+    }
+    
+    .btn-verify:hover {
+        background: linear-gradient(105deg, #23203b 0%, #3d3670 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 22px rgba(48, 44, 77, 0.3);
+    }
+    
+    .btn-verify:active {
+        transform: translateY(1px);
+    }
+    
+    /* Links */
+    .link-primary {
+        color: #E66239;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    
+    .link-primary:hover {
+        color: #c24d2a;
+        text-decoration: underline;
+    }
+    
+    /* Email Display */
+    .email-display {
+        background: #f0f4f8;
+        padding: 12px;
+        border-radius: 1rem;
+        text-align: center;
+        margin: 15px 0;
+    }
+    
+    .email-display h5 {
+        color: #E66239;
+        font-weight: 600;
+        margin: 0;
+        font-size: 0.95rem;
+    }
+    
+    hr {
+        opacity: 0.4;
+    }
+    
+    /* Toast Message Animation */
+    .custom-alert-toast {
+        animation: slideDownFade 0.25s ease-out forwards;
+        font-family: 'Inter', sans-serif;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        border-radius: 40px !important;
+        letter-spacing: -0.2px;
+        backdrop-filter: blur(12px);
+        background: rgba(255,255,245,0.96);
+        border-left: 4px solid;
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        min-width: 280px;
+        max-width: 90%;
+        padding: 0.75rem 1.25rem;
+        font-weight: 500;
+        font-size: 0.85rem;
+    }
+    
+    .alert-success.custom-alert-toast {
+        border-left-color: #10b981;
+        background: rgba(236, 253, 245, 0.96);
+        color: #0e6245;
+    }
+    
+    .alert-danger.custom-alert-toast {
+        border-left-color: #ef4444;
+        background: rgba(254, 226, 226, 0.96);
+        color: #b91c1c;
+    }
+    
+    @keyframes slideDownFade {
+        0% {
+            opacity: 0;
+            transform: translate(-50%, -20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .verify-card .card-body {
+            padding: 1.5rem !important;
+        }
+        
+        h1 {
+            font-size: 1.4rem;
+        }
+        
+        .brand-text {
+            font-size: 1.2rem;
+        }
+        
+        .otp-input {
+            font-size: 1.2rem;
+            letter-spacing: 5px;
+            padding: 0.6rem 0.8rem;
+        }
+    }
+</style>
+
+<div class="verify-wrapper">
+    <div class="card verify-card">
+        <div class="card-body">
+            <!-- Logo & Brand header -->
+            <div class="text-center mb-3">
+                <div class="logo-wrapper">
+                    <img src="data:image/svg+xml,%3csvg%20width='62'%20height='67'%20viewBox='0%200%2062%2067'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M30.604%2066.378L0.00805664%2048.1582V35.7825L30.604%2054.0023V66.378Z'%20fill='%23302C4D'/%3e%3cpath%20d='M61.1996%2048.1582L30.604%2066.378V54.0023L61.1996%2035.7825V48.1582Z'%20fill='%23E66239'/%3e%3cpath%20d='M30.5955%200L0%2018.2198V30.5955L30.5955%2012.3757V0Z'%20fill='%23657E92'/%3e%3cpath%20d='M61.191%2018.2198L30.5955%200V12.3757L61.191%2030.5955V18.2198Z'%20fill='%23A3B2BE'/%3e%3cpath%20d='M30.604%2048.8457L0.00805664%2030.6259V18.2498L30.604%2036.47V48.8457Z'%20fill='%23302C4D'/%3e%3cpath%20d='M61.1996%2030.6259L30.604%2048.8457V36.47L61.1996%2018.2498V30.6259Z'%20fill='%23E66239'/%3e%3c/svg%3e" alt="Dhami Electronics" width="34" height="36" class="logo-svg">
+                    <span class="brand-text ms-1">Dhami<span style="color:#E66239;">.</span></span>
+                </div>
+                <h1 class="card-title mt-3 mb-1 h3 fw-semibold">Verify Your Email</h1>
+                <p class="text-muted small mb-0">Enter the verification code</p>
+            </div>
+
+            <!-- Email Display -->
+            <div class="email-display">
+                <p class="small text-muted mb-1">We've sent a 6-digit verification code to:</p>
+                <h5>{{ email }}</h5>
+            </div>
+
+            <!-- Verification Form -->
+            <form method="POST" id="verifyForm">
+                <div class="mb-4">
+                    <label for="otp" class="form-label">OTP Code</label>
+                    <input type="text" class="form-control otp-input" id="otp" 
+                           name="otp" maxlength="6" placeholder="000000" required autofocus>
+                    <div class="invalid-feedback">Please enter the 6-digit OTP code</div>
+                </div>
+                
+                <button type="submit" class="btn btn-verify w-100 py-2" id="verifyBtn">
+                    Verify Email
+                </button>
+            </form>
+            
+            <hr class="my-4">
+            
+            <div class="text-center">
+                <p class="mb-0">
+                    Didn't receive the code? 
+                    <a href="#" id="resendOtp" class="link-primary fw-semibold">Resend OTP</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+// Helper function to show toast message
+function showMessage(message, isError = false) {
+    const existingAlert = document.querySelector('.custom-alert-toast');
+    if (existingAlert) existingAlert.remove();
+    
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `custom-alert-toast alert ${isError ? 'alert-danger' : 'alert-success'}`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close btn-sm float-end" style="background: transparent; position: relative; top: -2px;" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div style="clear: both;"></div>
+    `;
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        if (alertDiv && alertDiv.remove) alertDiv.remove();
+    }, 3000);
+    
+    const closeBtn = alertDiv.querySelector('.btn-close');
+    if (closeBtn) closeBtn.addEventListener('click', () => alertDiv.remove());
+}
+
+// Store email for resend
+var userEmail = "{{ email }}";
+
+// OTP input validation - only numbers
+const otpInput = document.getElementById('otp');
+otpInput.addEventListener('input', function(e) {
+    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);
+    
+    // Add validation class
+    if (this.value.length === 6) {
+        this.classList.add('is-valid');
+        this.classList.remove('is-invalid');
+    } else if (this.value.length > 0) {
+        this.classList.remove('is-valid');
+        this.classList.add('is-invalid');
+    } else {
+        this.classList.remove('is-valid', 'is-invalid');
+    }
+});
+
+// Form submission with validation
+const verifyForm = document.getElementById('verifyForm');
+const verifyBtn = document.getElementById('verifyBtn');
+
+verifyForm.addEventListener('submit', function(e) {
+    const otp = otpInput.value;
+    if (!otp || otp.length !== 6) {
+        e.preventDefault();
+        showMessage('⚠️ Please enter a valid 6-digit OTP code', true);
+        return false;
+    }
+    
+    // Show loading state
+    const originalText = verifyBtn.innerHTML;
+    verifyBtn.disabled = true;
+    verifyBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Verifying...';
+    
+    // Allow form to submit
+    return true;
+});
+
+// Resend OTP functionality
+$('#resendOtp').click(function(e) {
+    e.preventDefault();
+    
+    // Show loading state
+    const resendLink = $(this);
+    const originalText = resendLink.text();
+    resendLink.text('Sending...').css('opacity', '0.7');
+    
+    $.ajax({
+        url: '/resend-otp',
+        method: 'GET',
+        success: function(response) {
+            if (response.success) {
+                showMessage('✅ New OTP sent to your email!', false);
+                // Reset OTP input
+                otpInput.value = '';
+                otpInput.classList.remove('is-valid', 'is-invalid');
+                otpInput.focus();
+            } else {
+                showMessage('❌ ' + (response.error || 'Failed to send OTP. Please try again.'), true);
+            }
+        },
+        error: function(xhr) {
+            let errorMsg = 'Error sending OTP. Please try again.';
+            if (xhr.responseJSON && xhr.responseJSON.error) {
+                errorMsg = xhr.responseJSON.error;
+            }
+            showMessage('❌ ' + errorMsg, true);
+        },
+        complete: function() {
+            resendLink.text(originalText).css('opacity', '1');
+        }
+    });
+});
+
+// Auto focus on OTP input
+otpInput.focus();
+
+// Handle paste event for OTP
+otpInput.addEventListener('paste', function(e) {
+    const pastedData = e.clipboardData.getData('text');
+    const numbersOnly = pastedData.replace(/[^0-9]/g, '').slice(0, 6);
+    this.value = numbersOnly;
+    e.preventDefault();
+    
+    // Trigger validation
+    if (numbersOnly.length === 6) {
+        this.classList.add('is-valid');
+        this.classList.remove('is-invalid');
+    }
+});
+
+// Check for OTP message from session
+{% if session.pop('otp_message', None) %}
+    showMessage('{{ session.pop("otp_message") }}', false);
+{% endif %}
+</script>
+
+<style>
+    .spinner-border-sm {
+        width: 1rem;
+        height: 1rem;
+        border-width: 0.2em;
+    }
+    .btn-close {
+        opacity: 0.7;
+        background: transparent;
+        font-size: 0.8rem;
+    }
+    .btn-close:hover {
+        opacity: 1;
+    }
+    .card-body {
+        background: transparent;
+    }
+    .btn-verify:disabled {
+        opacity: 0.7;
+        transform: none;
+    }
+    ::placeholder {
+        color: #a0afc0;
+        font-size: 0.85rem;
+    }
+</style>
+{% endblock %}

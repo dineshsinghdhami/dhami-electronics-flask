@@ -1,0 +1,490 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Fix for footer positioning */
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    
+    .main-content {
+        flex: 1 0 auto;
+        display: flex;
+        flex-direction: column;
+        margin-top: 70px;
+    }
+    
+    .main-content .container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding-left: 0;
+        padding-right: 0;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        min-height: auto;
+    }
+    
+    .content-area {
+        flex: 1;
+        background: linear-gradient(135deg, #f6f9fc 0%, #eef2f5 100%);
+        padding: 40px 0;
+        width: 100%;
+    }
+    
+    .footer {
+        background-color: #18282b;
+        color: #ffffff;
+        width: 100%;
+        flex-shrink: 0;
+        margin-top: 0;
+        padding: 0;
+    }
+    
+    .footer .footer-container {
+        max-width: 100%;
+        width: 100%;
+        margin: 0 auto;
+        padding: 15px 20px 12px 20px;
+    }
+    
+    .footer h5 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+    
+    .footer p {
+        font-size: 0.7rem;
+        margin-bottom: 4px;
+        line-height: 1.4;
+        opacity: 0.8;
+    }
+    
+    .footer ul {
+        margin-bottom: 0;
+        padding-left: 0;
+    }
+    
+    .footer ul li {
+        margin-bottom: 4px;
+        list-style: none;
+    }
+    
+    .footer ul li a {
+        font-size: 0.7rem;
+        color: #a0a0a0;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+    
+    .footer ul li a:hover {
+        color: #f39c12;
+        padding-left: 3px;
+    }
+    
+    .footer .social-links {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    
+    .footer .social-icon {
+        width: 28px;
+        height: 28px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        color: white;
+        text-decoration: none;
+        font-size: 0.8rem;
+    }
+    
+    .footer .social-icon:hover {
+        background: #f39c12;
+        transform: translateY(-2px);
+    }
+    
+    :root {
+        --primary: #2874f0;
+        --secondary: #fb641b;
+        --dark: #212121;
+        --light: #f5f5f5;
+        --gray: #878787;
+        --white: #ffffff;
+    }
+    
+    .policy-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0;
+        width: 100%;
+    }
+    
+    .policy-header {
+        text-align: center;
+        padding: 60px 20px;
+        background: linear-gradient(135deg, #302C4D 0%, #4c4585 100%);
+        border-radius: 0;
+        margin-bottom: 0;
+        color: white;
+        width: 100%;
+    }
+    
+    .policy-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: white;
+    }
+    
+    .policy-header .last-updated {
+        font-size: 0.85rem;
+        opacity: 0.9;
+        color: rgba(255,255,255,0.9);
+    }
+    
+    .policy-content {
+        background: white;
+        border-radius: 0;
+        padding: 40px;
+        border: none;
+        border-bottom: 1px solid #e2e8f0;
+        width: 100%;
+    }
+    
+    .policy-section {
+        margin-bottom: 40px;
+        padding: 0;
+    }
+    
+    .policy-section:last-child {
+        margin-bottom: 0;
+    }
+    
+    .policy-section h2 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .policy-section h2 i {
+        color: #E66239;
+        font-size: 1.2rem;
+    }
+    
+    .policy-section h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 20px 0 10px 0;
+    }
+    
+    .policy-section p {
+        font-size: 0.9rem;
+        line-height: 1.7;
+        color: var(--gray);
+        margin-bottom: 16px;
+    }
+    
+    .policy-section ul, 
+    .policy-section ol {
+        margin: 16px 0;
+        padding-left: 24px;
+    }
+    
+    .policy-section li {
+        font-size: 0.9rem;
+        line-height: 1.7;
+        color: var(--gray);
+        margin-bottom: 8px;
+    }
+    
+    .info-box {
+        background: #e0f2fe;
+        border-left: 4px solid #0284c7;
+        padding: 16px 20px;
+        border-radius: 0.5rem;
+        margin: 20px 0;
+    }
+    
+    .info-box i {
+        color: #0284c7;
+        margin-right: 10px;
+    }
+    
+    .info-box p {
+        margin: 0;
+        display: inline;
+    }
+    
+    .contact-info {
+        background: linear-gradient(135deg, #302C4D 0%, #4c4585 100%);
+        color: white;
+        padding: 40px;
+        border-radius: 0;
+        text-align: center;
+        margin-top: 0;
+        width: 100%;
+    }
+    
+    .contact-info h3 {
+        color: white;
+        margin-bottom: 20px;
+        font-size: 1.3rem;
+    }
+    
+    .contact-info p {
+        color: rgba(255,255,255,0.9);
+        margin-bottom: 10px;
+    }
+    
+    .contact-info i {
+        margin-right: 8px;
+    }
+    
+    @media (max-width: 768px) {
+        .main-content {
+            margin-top: 60px;
+        }
+        
+        .policy-header {
+            padding: 40px 15px;
+        }
+        
+        .policy-header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .policy-content {
+            padding: 25px 15px;
+        }
+        
+        .policy-section h2 {
+            font-size: 1.1rem;
+        }
+        
+        .contact-info {
+            padding: 30px 15px;
+        }
+        
+        .footer .footer-container {
+            padding: 12px 15px 10px 15px;
+        }
+        
+        .footer .col-md-4 {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        
+        .footer .col-md-4:last-child {
+            margin-bottom: 0;
+        }
+        
+        .footer .social-links {
+            justify-content: center;
+        }
+    }
+    
+    /* For very large screens, center the content with max-width */
+    @media (min-width: 1400px) {
+        .policy-content {
+            padding: 40px 80px;
+        }
+    }
+</style>
+
+<div class="content-area">
+    <div class="policy-container">
+        <div class="policy-header">
+            <h1>Privacy Policy</h1>
+            <div class="last-updated">Last Updated: January 1, 2024</div>
+        </div>
+        
+        <div class="policy-content">
+            <div class="policy-section">
+                <h2><i class="fas fa-lock"></i> Our Commitment to Privacy</h2>
+                <p>At Dhami Electronics, we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or make a purchase.</p>
+                
+                <div class="info-box">
+                    <i class="fas fa-shield-alt"></i>
+                    <p><strong>Your trust matters:</strong> We never sell your personal information to third parties.</p>
+                </div>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-database"></i> Information We Collect</h2>
+                <p>We collect various types of information to provide and improve our services:</p>
+                
+                <h3>Personal Information</h3>
+                <ul>
+                    <li><strong>Contact Information:</strong> Name, email address, phone number, shipping address</li>
+                    <li><strong>Account Information:</strong> Username, password, order history</li>
+                    <li><strong>Payment Information:</strong> Payment method details (processed securely through third-party payment gateways)</li>
+                </ul>
+                
+                <h3>Automatically Collected Information</h3>
+                <ul>
+                    <li><strong>Device Information:</strong> IP address, browser type, operating system</li>
+                    <li><strong>Usage Data:</strong> Pages visited, time spent, products viewed</li>
+                    <li><strong>Cookies:</strong> Small files stored on your device to enhance user experience</li>
+                </ul>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-chart-line"></i> How We Use Your Information</h2>
+                <p>We use the collected information for the following purposes:</p>
+                <ul>
+                    <li><strong>Order Processing:</strong> To process and fulfill your orders, including delivery and payment</li>
+                    <li><strong>Communication:</strong> To send order confirmations, shipping updates, and respond to inquiries</li>
+                    <li><strong>Account Management:</strong> To create and manage your account</li>
+                    <li><strong>Improvement:</strong> To analyze website usage and improve our products and services</li>
+                    <li><strong>Marketing:</strong> To send promotional offers (only with your consent, you can opt out anytime)</li>
+                    <li><strong>Legal Compliance:</strong> To comply with applicable laws and regulations</li>
+                </ul>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-share-alt"></i> Information Sharing</h2>
+                <p>We do not sell, trade, or rent your personal information to third parties. We may share your information only in the following circumstances:</p>
+                <ul>
+                    <li><strong>Service Providers:</strong> With delivery partners, payment processors, and IT service providers who assist in operating our business</li>
+                    <li><strong>Legal Requirements:</strong> When required by law or to protect our legal rights</li>
+                    <li><strong>Business Transfers:</strong> In connection with a merger, acquisition, or sale of assets</li>
+                    <li><strong>With Your Consent:</strong> When you have given explicit permission</li>
+                </ul>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-cookie-bite"></i> Cookies & Tracking</h2>
+                <p>We use cookies and similar tracking technologies to enhance your browsing experience:</p>
+                <ul>
+                    <li><strong>Essential Cookies:</strong> Required for website functionality (shopping cart, login)</li>
+                    <li><strong>Analytics Cookies:</strong> Help us understand how visitors use our website</li>
+                    <li><strong>Preference Cookies:</strong> Remember your preferences and settings</li>
+                </ul>
+                <p>You can control cookie preferences through your browser settings. However, disabling cookies may affect website functionality.</p>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-lock"></i> Data Security</h2>
+                <p>We implement industry-standard security measures to protect your information:</p>
+                <ul>
+                    <li><strong>SSL Encryption:</strong> All data transmitted is encrypted using SSL technology</li>
+                    <li><strong>Secure Storage:</strong> Your information is stored on secure servers with access controls</li>
+                    <li><strong>Regular Audits:</strong> We regularly review our security practices</li>
+                    <li><strong>Limited Access:</strong> Only authorized personnel have access to personal information</li>
+                </ul>
+                
+                <div class="info-box">
+                    <i class="fas fa-check-circle"></i>
+                    <p><strong>Note:</strong> While we strive to protect your information, no method of transmission over the internet is 100% secure.</p>
+                </div>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-user-shield"></i> Your Rights & Choices</h2>
+                <p>You have the following rights regarding your personal information:</p>
+                <ul>
+                    <li><strong>Access:</strong> Request a copy of your personal data</li>
+                    <li><strong>Correction:</strong> Update or correct inaccurate information</li>
+                    <li><strong>Deletion:</strong> Request deletion of your account and data</li>
+                    <li><strong>Opt-out:</strong> Unsubscribe from marketing communications</li>
+                    <li><strong>Data Portability:</strong> Receive your data in a structured format</li>
+                </ul>
+                <p>To exercise these rights, please contact us at <strong>privacy@dhamielectronics.com</strong></p>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-child"></i> Children's Privacy</h2>
+                <p>Our website is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13. If you believe we have collected information from a child under 13, please contact us immediately.</p>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-globe"></i> Third-Party Links</h2>
+                <p>Our website may contain links to third-party websites. We are not responsible for the privacy practices or content of these external sites. We encourage you to read their privacy policies before providing any personal information.</p>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-bell"></i> Updates to This Policy</h2>
+                <p>We may update this Privacy Policy from time to time to reflect changes in our practices or legal requirements. We will notify you of any material changes by:</p>
+                <ul>
+                    <li>Posting the updated policy on this page</li>
+                    <li>Updating the "Last Updated" date at the top</li>
+                    <li>Sending an email notification (for significant changes)</li>
+                </ul>
+                <p>We encourage you to review this policy periodically.</p>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-clock"></i> Data Retention</h2>
+                <p>We retain your personal information for as long as necessary to fulfill the purposes outlined in this policy, unless a longer retention period is required by law. This includes:</p>
+                <ul>
+                    <li><strong>Account Information:</strong> Until you request account deletion</li>
+                    <li><strong>Order History:</strong> For 7 years (for tax and legal purposes)</li>
+                    <li><strong>Marketing Data:</strong> Until you unsubscribe</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="contact-info">
+            <h3><i class="fas fa-envelope"></i> Contact Us</h3>
+            <p>If you have questions about this Privacy Policy or our data practices, please contact us:</p>
+            <p><i class="fas fa-envelope"></i> privacy@dhamielectronics.com</p>
+            <p><i class="fas fa-phone"></i> +977-XXX-XXXXXX</p>
+            <p><i class="fas fa-map-marker-alt"></i> Dhami Electronics, Dhangadhi, Nepal</p>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Dhami Electronics</h5>
+                <p>Your one-stop shop for premium electronics.</p>
+                <p><i class="fas fa-map-marker-alt me-1"></i> Dhangadhi, Nepal</p>
+                <p><i class="fas fa-envelope me-1"></i> support@dhamielectronics.com</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Quick Links</h5>
+                <ul>
+                    <li><a href="{{ url_for('about') }}">About Us</a></li>
+                    <li><a href="{{ url_for('returns_policy') }}">Returns Policy</a></li>
+                    <li><a href="{{ url_for('privacy_policy') }}">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Follow Us</h5>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+                <p class="mt-2"><i class="fas fa-truck"></i> Free Shipping on orders above NPR 5000</p>
+            </div>
+        </div>
+    </div>
+</footer>
+{% endblock %}

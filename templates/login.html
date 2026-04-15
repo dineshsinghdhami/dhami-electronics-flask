@@ -1,0 +1,421 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Hide footer on login page */
+    .footer {
+        display: none !important;
+    }
+    
+    /* Center the login form */
+   .login-wrapper {
+    min-height: calc(100vh - 76px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: transparent; /* 🔥 remove outer box look */
+} 
+    
+    /* Modern Card Styling */
+    .login-card {
+        max-width: 460px;
+        width: 100%;
+        border: none;
+        border-radius: 30px;;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(0px);
+        box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.02);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        overflow: hidden;
+    }
+    
+    .login-card:hover {
+        box-shadow: 0 30px 55px -15px rgba(0, 0, 0, 0.25);
+    }
+    
+    .login-card .card-body {
+        padding: 2.2rem 2rem !important;
+    }
+    
+    @media (max-width: 480px) {
+        .login-card .card-body {
+            padding: 1.75rem 1.5rem !important;
+        }
+    }
+    
+    /* Logo & Brand */
+    .logo-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.65rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .logo-svg {
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+    }
+    
+    .brand-text {
+        font-weight: 700;
+        font-size: 1.45rem;
+        letter-spacing: -0.3px;
+        background: linear-gradient(120deg, #302C4D, #4a437a);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+    
+    h1 {
+        font-weight: 600;
+        font-size: 1.75rem;
+        letter-spacing: -0.3px;
+        color: #1a1e2b;
+        margin-bottom: 0.25rem !important;
+    }
+    
+    /* Form Labels */
+    .form-label {
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: #2c3e4e;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Form Controls */
+    .form-control {
+        border-radius: 1rem;
+        padding: 0.7rem 1rem;
+        font-size: 0.95rem;
+        border: 1px solid #e2e8f0;
+        background-color: #ffffff;
+        transition: all 0.2s ease;
+        box-shadow: none;
+    }
+    
+    .form-control:focus {
+        border-color: #E66239;
+        box-shadow: 0 0 0 4px rgba(230, 98, 57, 0.15);
+        outline: none;
+    }
+    
+    /* Primary Button */
+    .btn-login {
+        background: linear-gradient(105deg, #302C4D 0%, #4c4585 100%);
+        border: none;
+        border-radius: 2rem;
+        padding: 0.75rem 1rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+        letter-spacing: 0.2px;
+        transition: all 0.25s ease;
+        box-shadow: 0 8px 18px rgba(48, 44, 77, 0.2);
+        color: white;
+    }
+    
+    .btn-login:hover {
+        background: linear-gradient(105deg, #23203b 0%, #3d3670 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 22px rgba(48, 44, 77, 0.3);
+    }
+    
+    .btn-login:active {
+        transform: translateY(1px);
+    }
+    
+    /* Links */
+    .link-primary {
+        color: #E66239;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    
+    .link-primary:hover {
+        color: #c24d2a;
+        text-decoration: underline;
+    }
+    
+    /* Checkbox */
+    .form-check-input:checked {
+        background-color: #E66239;
+        border-color: #E66239;
+    }
+    
+    .form-check-input:focus {
+        border-color: #E66239;
+        box-shadow: 0 0 0 0.2rem rgba(230, 98, 57, 0.25);
+    }
+    
+    /* Demo Hint */
+    .demo-hint {
+        font-size: 0.7rem;
+        text-align: center;
+        margin-top: 1rem;
+        color: #94a3b8;
+    }
+    
+    hr {
+        opacity: 0.4;
+    }
+    
+    /* Toast Message Animation */
+    .custom-alert-toast {
+        animation: slideDownFade 0.25s ease-out forwards;
+        font-family: 'Inter', sans-serif;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        border-radius: 40px !important;
+        letter-spacing: -0.2px;
+        backdrop-filter: blur(12px);
+        background: rgba(255,255,245,0.95);
+        border-left: 4px solid;
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        min-width: 280px;
+        max-width: 90%;
+        padding: 0.75rem 1.25rem;
+        font-weight: 500;
+        font-size: 0.85rem;
+    }
+    
+    .alert-success.custom-alert-toast {
+        border-left-color: #10b981;
+        background: rgba(236, 253, 245, 0.96);
+        color: #0e6245;
+    }
+    
+    .alert-danger.custom-alert-toast {
+        border-left-color: #ef4444;
+        background: rgba(254, 226, 226, 0.96);
+        color: #b91c1c;
+    }
+    
+    @keyframes slideDownFade {
+        0% {
+            opacity: 0;
+            transform: translate(-50%, -20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .login-card .card-body {
+            padding: 1.5rem !important;
+        }
+        
+        h1 {
+            font-size: 1.4rem;
+        }
+        
+        .brand-text {
+            font-size: 1.2rem;
+        }
+    }
+
+    .logo-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-img {
+    width: 120px;   /* adjust as needed */
+    height: auto;
+    display: block;
+}
+</style>
+
+<div class="login-wrapper">
+    <div class="card login-card">
+        <div class="card-body">
+            <!-- Logo & Brand header -->
+         <div class="text-center mb-4">
+    <div class="logo-wrapper">
+        <img 
+            src="{{ url_for('static', filename='images/logo.png') }}" 
+            alt="Dhami Electronics"
+            class="logo-img"
+            onerror="this.onerror=null; this.src='https://via.placeholder.com/150x50?text=DE'"
+        >
+    </div>
+
+    <h1 class="card-title mt-3 mb-1 h3 fw-semibold">Welcome back</h1>
+    <p class="text-muted small mb-0">Sign in to your account</p>
+</div>
+
+            <!-- Login Form -->
+            <form method="POST" id="loginForm">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Email or Username</label>
+                    <input type="text" class="form-control" id="username" 
+                           name="username" placeholder="Enter your email or username" required autofocus>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label d-flex justify-content-between">
+                        <span>Password</span>
+                        <a href="{{ url_for('forgot_password') }}" class="small link-primary">Forgot Password?</a>
+                    </label>
+                    <input type="password" class="form-control" id="password" 
+                           name="password" placeholder="Enter your password" required>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="remember">
+                        <label class="form-check-label small" for="remember">Keep me signed in</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-login w-100 py-2" id="loginBtn">
+                    Sign in
+                </button>
+            </form>
+
+            <div class="text-center mt-4 small text-muted">
+                Don't have an account? 
+                <a href="{{ url_for('register') }}" class="link-primary fw-semibold">Create account</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    
+    const form = document.getElementById('loginForm');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const rememberCheck = document.getElementById('remember');
+    const loginBtn = document.getElementById('loginBtn');
+    
+    // Helper to show toast message
+    function showMessage(message, isError = false) {
+        // Remove any existing alert
+        const existingAlert = document.querySelector('.custom-alert-toast');
+        if(existingAlert) existingAlert.remove();
+        
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `custom-alert-toast alert ${isError ? 'alert-danger' : 'alert-success'}`;
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close btn-sm float-end" style="background: transparent; position: relative; top: -2px;" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div style="clear: both;"></div>
+        `;
+        document.body.appendChild(alertDiv);
+        
+        // Auto dismiss after 3 seconds
+        setTimeout(() => {
+            if(alertDiv && alertDiv.remove) alertDiv.remove();
+        }, 3000);
+        
+        // Add close button handler
+        const closeBtn = alertDiv.querySelector('.btn-close');
+        if(closeBtn) {
+            closeBtn.addEventListener('click', () => alertDiv.remove());
+        }
+    }
+    
+    // Real-time validation styling
+    usernameInput.addEventListener('input', function() {
+        if (usernameInput.value.trim() === '') {
+            usernameInput.classList.remove('is-valid', 'is-invalid');
+        } else {
+            usernameInput.classList.add('is-valid');
+            usernameInput.classList.remove('is-invalid');
+        }
+    });
+    
+    passwordInput.addEventListener('input', function() {
+        if (passwordInput.value === '') {
+            passwordInput.classList.remove('is-valid', 'is-invalid');
+        } else if (passwordInput.value.length >= 3) {
+            passwordInput.classList.add('is-valid');
+            passwordInput.classList.remove('is-invalid');
+        } else {
+            passwordInput.classList.add('is-invalid');
+            passwordInput.classList.remove('is-valid');
+        }
+    });
+    
+    // Handle form submission
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value;
+        
+        // Simple validation
+        if (!username) {
+            showMessage('⚠️ Please enter your email or username', true);
+            usernameInput.focus();
+            return;
+        }
+        
+        if (!password) {
+            showMessage('⚠️ Please enter your password', true);
+            passwordInput.focus();
+            return;
+        }
+        
+        if (password.length < 3) {
+            showMessage('⚠️ Password must be at least 3 characters', true);
+            passwordInput.focus();
+            return;
+        }
+        
+        // Disable button and show loading
+        const originalText = loginBtn.innerHTML;
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Signing in...';
+        
+        // Submit the form normally (server-side authentication)
+        // Store remember me preference
+        if (rememberCheck.checked) {
+            localStorage.setItem('remember_username', username);
+        } else {
+            localStorage.removeItem('remember_username');
+        }
+        
+        // Submit the form
+        form.submit();
+    });
+    
+    // Pre-fill remembered username
+    const rememberedUsername = localStorage.getItem('remember_username');
+    if (rememberedUsername) {
+        usernameInput.value = rememberedUsername;
+        rememberCheck.checked = true;
+        usernameInput.classList.add('is-valid');
+    }
+    
+    // Add spinner styles
+    const style = document.createElement('style');
+    style.textContent = `
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+            border-width: 0.2em;
+        }
+        .btn-close {
+            opacity: 0.7;
+            background: transparent;
+            font-size: 0.8rem;
+        }
+        .btn-close:hover {
+            opacity: 1;
+        }
+    `;
+    document.head.appendChild(style);
+})();
+</script>
+{% endblock %}

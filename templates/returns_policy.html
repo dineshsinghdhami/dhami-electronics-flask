@@ -1,0 +1,501 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Fix for footer positioning */
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    
+    .main-content {
+        flex: 1 0 auto;
+        display: flex;
+        flex-direction: column;
+        margin-top: 70px;
+    }
+    
+    .main-content .container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding-left: 0;
+        padding-right: 0;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        min-height: auto;
+    }
+    
+    .content-area {
+        flex: 1;
+        background: linear-gradient(135deg, #f6f9fc 0%, #eef2f5 100%);
+        padding: 40px 0;
+        width: 100%;
+    }
+    
+    .footer {
+        background-color: #18282b;
+        color: #ffffff;
+        width: 100%;
+        flex-shrink: 0;
+        margin-top: 0;
+        padding: 0;
+    }
+    
+    .footer .footer-container {
+        max-width: 100%;
+        width: 100%;
+        margin: 0 auto;
+        padding: 15px 20px 12px 20px;
+    }
+    
+    .footer h5 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+    
+    .footer p {
+        font-size: 0.7rem;
+        margin-bottom: 4px;
+        line-height: 1.4;
+        opacity: 0.8;
+    }
+    
+    .footer ul {
+        margin-bottom: 0;
+        padding-left: 0;
+    }
+    
+    .footer ul li {
+        margin-bottom: 4px;
+        list-style: none;
+    }
+    
+    .footer ul li a {
+        font-size: 0.7rem;
+        color: #a0a0a0;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+    
+    .footer ul li a:hover {
+        color: #f39c12;
+        padding-left: 3px;
+    }
+    
+    .footer .social-links {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    
+    .footer .social-icon {
+        width: 28px;
+        height: 28px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        color: white;
+        text-decoration: none;
+        font-size: 0.8rem;
+    }
+    
+    .footer .social-icon:hover {
+        background: #f39c12;
+        transform: translateY(-2px);
+    }
+    
+    :root {
+        --primary: #2874f0;
+        --secondary: #fb641b;
+        --dark: #212121;
+        --light: #f5f5f5;
+        --gray: #878787;
+        --white: #ffffff;
+    }
+    
+    .policy-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0;
+        width: 100%;
+    }
+    
+    .policy-header {
+        text-align: center;
+        padding: 60px 20px;
+        background: linear-gradient(135deg, #302C4D 0%, #4c4585 100%);
+        border-radius: 0;
+        margin-bottom: 0;
+        color: white;
+        width: 100%;
+    }
+    
+    .policy-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: white;
+    }
+    
+    .policy-header .last-updated {
+        font-size: 0.85rem;
+        opacity: 0.9;
+        color: rgba(255,255,255,0.9);
+    }
+    
+    .policy-content {
+        background: white;
+        border-radius: 0;
+        padding: 40px;
+        border: none;
+        border-bottom: 1px solid #e2e8f0;
+        width: 100%;
+    }
+    
+    .policy-section {
+        margin-bottom: 40px;
+        padding: 0;
+    }
+    
+    .policy-section:last-child {
+        margin-bottom: 0;
+    }
+    
+    .policy-section h2 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .policy-section h2 i {
+        color: #E66239;
+        font-size: 1.2rem;
+    }
+    
+    .policy-section h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 20px 0 10px 0;
+    }
+    
+    .policy-section p {
+        font-size: 0.9rem;
+        line-height: 1.7;
+        color: var(--gray);
+        margin-bottom: 16px;
+    }
+    
+    .policy-section ul, 
+    .policy-section ol {
+        margin: 16px 0;
+        padding-left: 24px;
+    }
+    
+    .policy-section li {
+        font-size: 0.9rem;
+        line-height: 1.7;
+        color: var(--gray);
+        margin-bottom: 8px;
+    }
+    
+    .info-box {
+        background: #fef3c7;
+        border-left: 4px solid #f59e0b;
+        padding: 16px 20px;
+        border-radius: 0.5rem;
+        margin: 20px 0;
+    }
+    
+    .info-box i {
+        color: #f59e0b;
+        margin-right: 10px;
+    }
+    
+    .info-box p {
+        margin: 0;
+        display: inline;
+    }
+    
+    .warning-box {
+        background: #fef2f2;
+        border-left: 4px solid #dc2626;
+        padding: 16px 20px;
+        border-radius: 0.5rem;
+        margin: 20px 0;
+    }
+    
+    .warning-box i {
+        color: #dc2626;
+        margin-right: 10px;
+    }
+    
+    .success-box {
+        background: #ecfdf5;
+        border-left: 4px solid #10b981;
+        padding: 16px 20px;
+        border-radius: 0.5rem;
+        margin: 20px 0;
+    }
+    
+    .success-box i {
+        color: #10b981;
+        margin-right: 10px;
+    }
+    
+    .contact-info {
+        background: linear-gradient(135deg, #302C4D 0%, #4c4585 100%);
+        color: white;
+        padding: 40px;
+        border-radius: 0;
+        text-align: center;
+        margin-top: 0;
+        width: 100%;
+    }
+    
+    .contact-info h3 {
+        color: white;
+        margin-bottom: 20px;
+        font-size: 1.3rem;
+    }
+    
+    .contact-info p {
+        color: rgba(255,255,255,0.9);
+        margin-bottom: 10px;
+    }
+    
+    .contact-info i {
+        margin-right: 8px;
+    }
+    
+    @media (max-width: 768px) {
+        .main-content {
+            margin-top: 60px;
+        }
+        
+        .policy-header {
+            padding: 40px 15px;
+        }
+        
+        .policy-header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .policy-content {
+            padding: 25px 15px;
+        }
+        
+        .policy-section h2 {
+            font-size: 1.1rem;
+        }
+        
+        .contact-info {
+            padding: 30px 15px;
+        }
+        
+        .footer .footer-container {
+            padding: 12px 15px 10px 15px;
+        }
+        
+        .footer .col-md-4 {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        
+        .footer .col-md-4:last-child {
+            margin-bottom: 0;
+        }
+        
+        .footer .social-links {
+            justify-content: center;
+        }
+    }
+    
+    /* For very large screens, center the content with max-width */
+    @media (min-width: 1400px) {
+        .policy-content {
+            padding: 40px 80px;
+        }
+    }
+</style>
+
+<div class="content-area">
+    <div class="policy-container">
+        <div class="policy-header">
+            <h1>Returns & Exchange Policy</h1>
+            <div class="last-updated">Last Updated: January 1, 2024</div>
+        </div>
+        
+        <div class="policy-content">
+            <div class="policy-section">
+                <h2><i class="fas fa-sync-alt"></i> 7-Day Return Policy</h2>
+                <p>At Dhami Electronics, customer satisfaction is our top priority. We offer a <strong>7-day return policy</strong> on most products. If you're not completely satisfied with your purchase, you may return it within 7 days of delivery for a refund or exchange.</p>
+                
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <p><strong>Note:</strong> The 7-day return period starts from the date of delivery.</p>
+                </div>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-check-circle"></i> Eligibility Criteria</h2>
+                <p>To be eligible for a return, your item must meet the following conditions:</p>
+                <ul>
+                    <li><strong>Unused Condition:</strong> Product must be unused, unwashed, and in the same condition as received</li>
+                    <li><strong>Original Packaging:</strong> All original packaging, tags, accessories, and manuals must be included</li>
+                    <li><strong>Proof of Purchase:</strong> Original invoice or order confirmation is required</li>
+                    <li><strong>Non-Damaged:</strong> Product should not show signs of damage caused by the customer</li>
+                </ul>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-ban"></i> Non-Returnable Items</h2>
+                <p>The following items cannot be returned or exchanged:</p>
+                <ul>
+                    <li>Software, games, or digital products that have been opened or used</li>
+                    <li>Personal care items, headphones, and earbuds (for hygiene reasons)</li>
+                    <li>Clearance or final sale items</li>
+                    <li>Items damaged due to misuse, accident, or improper handling</li>
+                    <li>Products missing serial numbers or warranty stickers</li>
+                    <li>Customized or personalized products</li>
+                </ul>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-tools"></i> Damaged or Defective Items</h2>
+                <p>If you receive a damaged or defective product, please contact us within 48 hours of delivery. We will:</p>
+                <ul>
+                    <li>Arrange for a replacement at no additional cost</li>
+                    <li>Cover all return shipping costs for defective items</li>
+                    <li>Process a full refund if replacement is not available</li>
+                </ul>
+                
+                <div class="warning-box">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p><strong>Important:</strong> Please inspect your package immediately upon delivery and report any damage within 48 hours.</p>
+                </div>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-dollar-sign"></i> Refund Process</h2>
+                <p>Once we receive and inspect your returned item, we will process your refund within 5-7 business days. Refunds will be issued through the original payment method:</p>
+                <ul>
+                    <li><strong>Cash on Delivery:</strong> Refund via bank transfer or store credit</li>
+                    <li><strong>Bank Transfer:</strong> Refund to the same bank account</li>
+                    <li><strong>Mobile Payment:</strong> Refund to the same mobile wallet</li>
+                    <li><strong>Store Credit:</strong> Available upon request</li>
+                </ul>
+                
+                <div class="success-box">
+                    <i class="fas fa-check-circle"></i>
+                    <p><strong>Processing Time:</strong> Refunds are processed within 5-7 business days after inspection.</p>
+                </div>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-truck"></i> Return Shipping</h2>
+                <p><strong>Customer's Responsibility:</strong> For non-defective returns, the customer is responsible for return shipping costs. We recommend using a trackable shipping service.</p>
+                <p><strong>Our Responsibility:</strong> For defective or incorrect items, we will provide a prepaid shipping label or arrange for pickup.</p>
+                
+                <div class="info-box">
+                    <i class="fas fa-truck"></i>
+                    <p><strong>Return Address:</strong> Dhami Electronics, Dhangadhi, Nepal</p>
+                </div>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-exchange-alt"></i> Exchange Process</h2>
+                <p>If you wish to exchange an item for a different product or size:</p>
+                <ol>
+                    <li>Contact our support team within 7 days of delivery</li>
+                    <li>Return the original item (following return guidelines)</li>
+                    <li>Place a new order for the desired item</li>
+                    <li>We'll process a refund for the returned item upon inspection</li>
+                </ol>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-clock"></i> Warranty Information</h2>
+                <p>All products come with manufacturer warranty as specified on the product page. Warranty periods vary by product and brand:</p>
+                <ul>
+                    <li><strong>Electronics:</strong> 6 months to 1 year warranty</li>
+                    <li><strong>Accessories:</strong> 3 to 6 months warranty</li>
+                    <li><strong>Premium Products:</strong> Up to 2 years warranty</li>
+                </ul>
+                <p>For warranty claims, please contact us with your order number and a description of the issue. We'll assist you with the manufacturer's warranty process.</p>
+            </div>
+            
+            <div class="policy-section">
+                <h2><i class="fas fa-clipboard-list"></i> How to Initiate a Return</h2>
+                <p>To return an item, please follow these steps:</p>
+                <ol>
+                    <li>Email us at <strong>returns@dhamielectronics.com</strong> with your order number</li>
+                    <li>Include photos/videos of the product (if reporting damage or defect)</li>
+                    <li>Wait for return authorization and instructions</li>
+                    <li>Pack the item securely in original packaging</li>
+                    <li>Ship to our return address or wait for pickup</li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="contact-info">
+            <h3><i class="fas fa-headset"></i> Need Help?</h3>
+            <p><i class="fas fa-envelope"></i> returns@dhamielectronics.com</p>
+            <p><i class="fas fa-phone"></i> +977-XXX-XXXXXX</p>
+            <p><i class="fas fa-clock"></i> Mon-Sat: 9 AM - 6 PM (Nepal Time)</p>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Dhami Electronics</h5>
+                <p>Your one-stop shop for premium electronics.</p>
+                <p><i class="fas fa-map-marker-alt me-1"></i> Dhangadhi, Nepal</p>
+                <p><i class="fas fa-envelope me-1"></i> support@dhamielectronics.com</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Quick Links</h5>
+                <ul>
+                    <li><a href="{{ url_for('about') }}">About Us</a></li>
+                    <li><a href="{{ url_for('returns_policy') }}">Returns Policy</a></li>
+                    <li><a href="{{ url_for('privacy_policy') }}">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Follow Us</h5>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+                <p class="mt-2"><i class="fas fa-truck"></i> Free Shipping on orders above NPR 5000</p>
+            </div>
+        </div>
+    </div>
+</footer>
+{% endblock %}

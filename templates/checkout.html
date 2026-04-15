@@ -1,0 +1,802 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Simple & Clean E-commerce Design - Full Width for Checkout Page */
+    .main-content .container {
+        max-width: 100%;
+        padding-left: 0;
+        padding-right: 0;
+        margin: 0;
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* Make main content area flexible to push footer down */
+    .main-content .container > div:not(.footer) {
+        flex: 1;
+    }
+    
+    /* Modern Gradient Background for Content Area */
+    .content-area {
+        background: linear-gradient(135deg, #f6f9fc 0%, #eef2f5 100%);
+        padding: 20px 0 40px 0;
+    }
+    
+    :root {
+        --primary: #2874f0;
+        --secondary: #fb641b;
+        --dark: #212121;
+        --light: #f5f5f5;
+        --gray: #878787;
+        --white: #ffffff;
+    }
+    
+    /* Section Header */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 0 20px;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 0;
+        position: relative;
+        padding-left: 12px;
+    }
+    
+    .section-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 18px;
+        background: #E66239;
+        border-radius: 2px;
+    }
+    
+    /* Checkout Grid Layout */
+    .checkout-grid {
+        display: flex;
+        gap: 24px;
+        padding: 0 20px;
+        flex-wrap: wrap;
+    }
+    
+    .shipping-section {
+        flex: 2;
+        min-width: 0;
+    }
+    
+    .order-summary-section {
+        flex: 1;
+        min-width: 300px;
+    }
+    
+    /* Form Card */
+    .form-card {
+        background: var(--white);
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+    }
+    
+    .form-card-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid #e2e8f0;
+        background: #fafcff;
+    }
+    
+    .form-card-header h4 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .form-card-header h4 i {
+        color: #E66239;
+        font-size: 1rem;
+    }
+    
+    .form-card-body {
+        padding: 20px;
+    }
+    
+    /* Form Styles */
+    .form-group {
+        margin-bottom: 18px;
+    }
+    
+    .form-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    
+    .form-label i {
+        margin-right: 4px;
+        color: #E66239;
+        font-size: 0.7rem;
+    }
+    
+    .form-label .required {
+        color: #dc2626;
+        margin-left: 4px;
+    }
+    
+    .form-control-checkout {
+        width: 100%;
+        padding: 10px 14px;
+        font-size: 0.85rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        transition: all 0.2s;
+        background: white;
+    }
+    
+    .form-control-checkout:focus {
+        outline: none;
+        border-color: #E66239;
+        box-shadow: 0 0 0 3px rgba(230, 98, 57, 0.1);
+    }
+    
+    .form-control-checkout[readonly] {
+        background: #f8fafc;
+        color: var(--gray);
+    }
+    
+    .form-control-checkout.error {
+        border-color: #dc2626;
+        background-color: #fef2f2;
+    }
+    
+    textarea.form-control-checkout {
+        resize: vertical;
+        min-height: 80px;
+    }
+    
+    /* Error Message */
+    .error-message {
+        color: #dc2626;
+        font-size: 0.7rem;
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .error-message i {
+        font-size: 0.65rem;
+    }
+    
+    /* Order Summary Card */
+    .summary-card-checkout {
+        background: var(--white);
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+        position: sticky;
+        top: 20px;
+    }
+    
+    .summary-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid #e2e8f0;
+        background: #fafcff;
+    }
+    
+    .summary-header h4 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .summary-header h4 i {
+        color: #E66239;
+    }
+    
+    .summary-body {
+        padding: 20px;
+    }
+    
+    /* Cart Items List */
+    .order-items-list {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-bottom: 16px;
+    }
+    
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed #e2e8f0;
+        font-size: 0.8rem;
+    }
+    
+    .order-item:last-child {
+        border-bottom: none;
+    }
+    
+    .order-item-name {
+        color: var(--dark);
+        flex: 2;
+    }
+    
+    .order-item-qty {
+        color: var(--gray);
+        margin: 0 8px;
+    }
+    
+    .order-item-price {
+        font-weight: 500;
+        color: #E66239;
+    }
+    
+    /* Summary Rows */
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 0.85rem;
+    }
+    
+    .summary-row.total-row {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #e2e8f0;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+    
+    .shipping-free-badge {
+        color: #10b981;
+        font-weight: 500;
+    }
+    
+    .shipping-fee-text {
+        color: #f59e0b;
+    }
+    
+    .total-amount {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #E66239;
+    }
+    
+    /* Free Shipping Alert */
+    .free-shipping-alert {
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        border-radius: 0.75rem;
+        padding: 12px;
+        margin-top: 16px;
+    }
+    
+    .free-shipping-alert i {
+        color: #10b981;
+        margin-right: 8px;
+    }
+    
+    .free-shipping-alert strong {
+        color: #065f46;
+        font-size: 0.8rem;
+    }
+    
+    .free-shipping-alert small {
+        color: #047857;
+        font-size: 0.7rem;
+    }
+    
+    .shipping-info-alert {
+        background: #fef3c7;
+        border: 1px solid #fde68a;
+        border-radius: 0.75rem;
+        padding: 10px 12px;
+        margin-top: 16px;
+        font-size: 0.7rem;
+    }
+    
+    .shipping-info-alert i {
+        color: #d97706;
+        margin-right: 6px;
+    }
+    
+    /* Place Order Button */
+    .btn-place-order {
+        width: 100%;
+        background: linear-gradient(105deg, #302C4D 0%, #4c4585 100%);
+        border: none;
+        border-radius: 2rem;
+        padding: 12px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: white;
+        transition: all 0.2s;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+    
+    .btn-place-order:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(48, 44, 77, 0.25);
+    }
+    
+    .btn-place-order:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    
+    /* Back to Cart Link */
+    .back-to-cart {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.75rem;
+        color: #64748b;
+        text-decoration: none;
+        margin-bottom: 16px;
+        transition: color 0.2s;
+    }
+    
+    .back-to-cart:hover {
+        color: #E66239;
+    }
+    
+    /* Footer */
+    .footer {
+        background-color: #18282b;
+        color: #ffffff;
+        width: 100%;
+        margin-top: auto;
+        padding: 0;
+    }
+    
+    .footer .footer-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 15px 20px 12px 20px;
+    }
+    
+    .footer h5 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+    
+    .footer p {
+        font-size: 0.7rem;
+        margin-bottom: 4px;
+        line-height: 1.4;
+        opacity: 0.8;
+    }
+    
+    .footer ul {
+        margin-bottom: 0;
+        padding-left: 0;
+    }
+    
+    .footer ul li {
+        margin-bottom: 4px;
+        list-style: none;
+    }
+    
+    .footer ul li a {
+        font-size: 0.7rem;
+        color: #a0a0a0;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+    
+    .footer ul li a:hover {
+        color: #f39c12;
+        padding-left: 3px;
+    }
+    
+    .footer .social-links {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    
+    .footer .social-icon {
+        width: 28px;
+        height: 28px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        color: white;
+        text-decoration: none;
+        font-size: 0.8rem;
+    }
+    
+    .footer .social-icon:hover {
+        background: #f39c12;
+        transform: translateY(-2px);
+    }
+    
+    /* Responsive */
+    @media (max-width: 992px) {
+        .checkout-grid {
+            flex-direction: column;
+        }
+        
+        .summary-card-checkout {
+            position: static;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .section-header {
+            padding: 0 15px;
+        }
+        
+        .checkout-grid {
+            padding: 0 15px;
+        }
+        
+        .form-card-body {
+            padding: 16px;
+        }
+        
+        .summary-body {
+            padding: 16px;
+        }
+        
+        .order-item {
+            font-size: 0.75rem;
+        }
+        
+        .footer .footer-container {
+            padding: 12px 15px 10px 15px;
+        }
+        
+        .footer .col-md-4 {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        
+        .footer .col-md-4:last-child {
+            margin-bottom: 0;
+        }
+        
+        .footer .social-links {
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="content-area">
+    <div class="section-header">
+        <h2 class="section-title">Checkout</h2>
+    </div>
+    
+    <div class="checkout-grid">
+        <!-- Shipping Information Section -->
+        <div class="shipping-section">
+            <a href="{{ url_for('cart') }}" class="back-to-cart">
+                <i class="fas fa-arrow-left"></i> Back to Cart
+            </a>
+            
+            <div class="form-card">
+                <div class="form-card-header">
+                    <h4><i class="fas fa-truck"></i> Shipping Information</h4>
+                </div>
+                <div class="form-card-body">
+                    <form method="POST" id="checkoutForm" onsubmit="return validateForm()">
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-user"></i> Full Name</label>
+                            <input type="text" class="form-control-checkout" value="{{ current_user.username }}" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-envelope"></i> Email</label>
+                            <input type="email" class="form-control-checkout" value="{{ current_user.email }}" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-phone-alt"></i> Phone Number 
+                                <span class="required">*</span>
+                            </label>
+                            <input type="tel" name="phone" id="phone" class="form-control-checkout" required placeholder="e.g., 9801234567 or 01-1234567">
+                            <div class="error-message" id="phoneError" style="display: none;">
+                                <i class="fas fa-exclamation-circle"></i> Please enter a valid phone number (numbers only, 7-15 digits)
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-map-marker-alt"></i> Shipping Address 
+                                <span class="required">*</span>
+                            </label>
+                            <textarea name="address" id="address" class="form-control-checkout" rows="3" required placeholder="House no., Street, City, District"></textarea>
+                            <div class="error-message" id="addressError" style="display: none;">
+                                <i class="fas fa-exclamation-circle"></i> Please enter your shipping address (minimum 10 characters)
+                            </div>
+                        </div>
+                        
+                        <button type="submit" id="submitBtn" class="btn-place-order">
+                            <i class="fas fa-check-circle"></i> Place Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Order Summary Section -->
+        <div class="order-summary-section">
+            <div class="summary-card-checkout">
+                <div class="summary-header">
+                    <h4><i class="fas fa-receipt"></i> Order Summary</h4>
+                </div>
+                <div class="summary-body">
+                    <!-- Cart Items List -->
+                    <div class="order-items-list">
+                        {% for item in cart_items %}
+                        <div class="order-item">
+                            <span class="order-item-name">{{ item.product.name[:35] }}{% if item.product.name|length > 35 %}...{% endif %}</span>
+                            <span class="order-item-qty">x{{ item.quantity }}</span>
+                            <span class="order-item-price">NPR {{ "%.0f"|format(item.product.price * item.quantity) }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Subtotal -->
+                    <div class="summary-row">
+                        <span>Subtotal ({{ cart_items|length }} items)</span>
+                        <span>NPR {{ "%.0f"|format(subtotal) }}</span>
+                    </div>
+                    
+                    <!-- Shipping Fee -->
+                    <div class="summary-row">
+                        <span>Shipping Fee</span>
+                        {% if subtotal >= 5000 %}
+                            <span class="shipping-free-badge"><i class="fas fa-gift"></i> FREE</span>
+                        {% else %}
+                            <span class="shipping-fee-text">NPR {{ "%.0f"|format(shipping_fee) }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Total -->
+                    <div class="summary-row total-row">
+                        <span>Total Amount</span>
+                        <span class="total-amount">NPR {{ "%.0f"|format(total) }}</span>
+                    </div>
+                    
+                    <!-- Free Shipping Message -->
+                    {% if subtotal >= 5000 %}
+                        <div class="free-shipping-alert">
+                            <i class="fas fa-truck"></i>
+                            <strong>Free Shipping Applied!</strong><br>
+                            <small>You've qualified for free shipping on this order.</small>
+                        </div>
+                    {% else %}
+                        <div class="shipping-info-alert">
+                            <i class="fas fa-info-circle"></i>
+                            Add NPR {{ "%.0f"|format(5000 - subtotal) }} more to get <strong>FREE shipping</strong>!
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Dhami Electronics</h5>
+                <p>Your one-stop shop for premium electronics.</p>
+                <p><i class="fas fa-map-marker-alt me-1"></i> Dhangadhi, Nepal</p>
+                <p><i class="fas fa-envelope me-1"></i> support@dhamielectronics.com</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Quick Links</h5>
+               <ul>
+                        <li><a href="{{ url_for('about') }}">About Us</a></li>
+    <li><a href="{{ url_for('returns_policy') }}">Returns Policy</a></li>
+    <li><a href="{{ url_for('privacy_policy') }}">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Follow Us</h5>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+                <p class="mt-2"><i class="fas fa-truck"></i> Free Shipping on orders above NPR 5000</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+// Phone number validation - Nepali phone numbers
+function validatePhoneNumber(phone) {
+    // Remove any spaces or special characters
+    const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
+    
+    // Nepali phone number patterns:
+    // Mobile: 98xxxxxxxx, 97xxxxxxxx, 96xxxxxxxx
+    // Landline: 01-xxxxxxx, 0xx-xxxxxx etc.
+    const mobilePattern = /^98[0-9]{8}$|^97[0-9]{8}$|^96[0-9]{8}$/;
+    const landlinePattern = /^0[1-9][0-9]{1,2}-?[0-9]{6,7}$/;
+    
+    // Also allow simple number-only with 7-15 digits
+    const simpleNumberPattern = /^[0-9]{7,15}$/;
+    
+    return mobilePattern.test(cleanPhone) || landlinePattern.test(cleanPhone) || simpleNumberPattern.test(cleanPhone);
+}
+
+// Address validation
+function validateAddress(address) {
+    // Address should be at least 10 characters and not just spaces
+    const trimmedAddress = address.trim();
+    if (trimmedAddress.length < 10) {
+        return false;
+    }
+    // Should contain at least one number and some letters
+    const hasNumber = /\d/.test(trimmedAddress);
+    const hasLetter = /[a-zA-Z\u0900-\u097F]/.test(trimmedAddress);
+    return hasNumber && hasLetter;
+}
+
+// Real-time validation for phone
+const phoneInput = document.getElementById('phone');
+const phoneError = document.getElementById('phoneError');
+const addressInput = document.getElementById('address');
+const addressError = document.getElementById('addressError');
+const submitBtn = document.getElementById('submitBtn');
+
+function validatePhoneField() {
+    const phone = phoneInput.value;
+    if (phone.trim() === '') {
+        phoneError.style.display = 'block';
+        phoneError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Phone number is required';
+        phoneInput.classList.add('error');
+        return false;
+    } else if (!validatePhoneNumber(phone)) {
+        phoneError.style.display = 'block';
+        phoneError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please enter a valid phone number (e.g., 9801234567 or 01-4123456)';
+        phoneInput.classList.add('error');
+        return false;
+    } else {
+        phoneError.style.display = 'none';
+        phoneInput.classList.remove('error');
+        return true;
+    }
+}
+
+function validateAddressField() {
+    const address = addressInput.value;
+    if (address.trim() === '') {
+        addressError.style.display = 'block';
+        addressError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Shipping address is required';
+        addressInput.classList.add('error');
+        return false;
+    } else if (!validateAddress(address)) {
+        addressError.style.display = 'block';
+        addressError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please enter a complete address (minimum 10 characters with house number and street)';
+        addressInput.classList.add('error');
+        return false;
+    } else {
+        addressError.style.display = 'none';
+        addressInput.classList.remove('error');
+        return true;
+    }
+}
+
+// Add real-time validation events
+phoneInput.addEventListener('input', function() {
+    validatePhoneField();
+    updateSubmitButton();
+});
+
+phoneInput.addEventListener('blur', function() {
+    validatePhoneField();
+    updateSubmitButton();
+});
+
+addressInput.addEventListener('input', function() {
+    validateAddressField();
+    updateSubmitButton();
+});
+
+addressInput.addEventListener('blur', function() {
+    validateAddressField();
+    updateSubmitButton();
+});
+
+// Update submit button state
+function updateSubmitButton() {
+    const isPhoneValid = validatePhoneField();
+    const isAddressValid = validateAddressField();
+    
+    if (isPhoneValid && isAddressValid) {
+        submitBtn.disabled = false;
+    } else {
+        submitBtn.disabled = true;
+    }
+}
+
+// Form submission validation
+function validateForm() {
+    const isPhoneValid = validatePhoneField();
+    const isAddressValid = validateAddressField();
+    
+    if (!isPhoneValid || !isAddressValid) {
+        // Scroll to first error
+        if (!isPhoneValid) {
+            phoneInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            phoneInput.focus();
+        } else if (!isAddressValid) {
+            addressInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            addressInput.focus();
+        }
+        
+        Swal.fire({
+            icon: 'error',
+            title: 'Validation Error',
+            text: 'Please fill in all required fields correctly before placing your order.',
+            confirmButtonColor: '#dc2626'
+        });
+        return false;
+    }
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Processing...';
+    
+    return true;
+}
+
+// Initial validation on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateSubmitButton();
+    
+    // Add example tooltips
+    phoneInput.setAttribute('title', 'Example: 9801234567 (mobile) or 01-4123456 (landline)');
+    addressInput.setAttribute('title', 'Include house number, street name, city, and district');
+});
+
+// Prevent form resubmission on page refresh
+if (window.history.replaceState) {
+    window.history.replaceState(null, null, window.location.href);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,698 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Simple & Clean E-commerce Design - Full Width for Edit Product Page */
+    .main-content .container {
+        max-width: 100%;
+        padding-left: 0;
+        padding-right: 0;
+        margin: 0;
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* Make main content area flexible to push footer down */
+    .main-content .container > div:not(.footer) {
+        flex: 1;
+    }
+    
+    /* Modern Gradient Background for Content Area */
+    .content-area {
+        background: linear-gradient(135deg, #f6f9fc 0%, #eef2f5 100%);
+        padding: 20px 0 40px 0;
+    }
+    
+    :root {
+        --primary: #2874f0;
+        --secondary: #fb641b;
+        --dark: #212121;
+        --light: #f5f5f5;
+        --gray: #878787;
+        --white: #ffffff;
+    }
+    
+    /* Section Header */
+    .section-header {
+        margin-bottom: 20px;
+        padding: 0 20px;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 0;
+        position: relative;
+        padding-left: 12px;
+    }
+    
+    .section-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 18px;
+        background: #E66239;
+        border-radius: 2px;
+    }
+    
+    /* Form Container */
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    /* Form Card */
+    .form-card {
+        background: var(--white);
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+    }
+    
+    .form-card-header {
+        padding: 16px 24px;
+        background: #fafcff;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .form-card-header h3 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .form-card-header h3 i {
+        color: #E66239;
+        font-size: 1rem;
+    }
+    
+    .form-card-body {
+        padding: 24px;
+    }
+    
+    /* Form Groups */
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    
+    .form-label i {
+        margin-right: 4px;
+        color: #E66239;
+        font-size: 0.7rem;
+    }
+    
+    .form-label .required {
+        color: #dc2626;
+        margin-left: 4px;
+    }
+    
+    .form-control-custom {
+        width: 100%;
+        padding: 10px 14px;
+        font-size: 0.85rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        transition: all 0.2s;
+        background: white;
+    }
+    
+    .form-control-custom:focus {
+        outline: none;
+        border-color: #E66239;
+        box-shadow: 0 0 0 3px rgba(230, 98, 57, 0.1);
+    }
+    
+    select.form-control-custom {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 14px;
+    }
+    
+    textarea.form-control-custom {
+        resize: vertical;
+        min-height: 100px;
+    }
+    
+    /* Discount Preview */
+    .discount-preview {
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        border-radius: 0.75rem;
+        padding: 14px 16px;
+        margin-top: 12px;
+    }
+    
+    .discount-preview .original-price {
+        text-decoration: line-through;
+        color: #94a3b8;
+        font-size: 0.75rem;
+        display: block;
+    }
+    
+    .discount-preview .discounted-price {
+        color: #E66239;
+        font-size: 1rem;
+        font-weight: 700;
+        display: block;
+    }
+    
+    .discount-preview .save-amount {
+        color: #10b981;
+        font-weight: 600;
+        font-size: 0.75rem;
+    }
+    
+    /* Current Image Section */
+    .current-image-section {
+        background: #f8fafc;
+        border-radius: 0.75rem;
+        padding: 16px;
+        margin-bottom: 20px;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .current-image-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .current-image-label i {
+        color: #E66239;
+    }
+    
+    .current-image {
+        max-width: 120px;
+        max-height: 120px;
+        border-radius: 0.75rem;
+        border: 1px solid #e2e8f0;
+        padding: 4px;
+        background: white;
+    }
+    
+    .image-help-text {
+        font-size: 0.65rem;
+        color: var(--gray);
+        margin-top: 8px;
+        display: block;
+    }
+    
+    /* Image Preview for New Image */
+    .new-image-preview {
+        margin-top: 12px;
+        display: none;
+    }
+    
+    .new-image-preview img {
+        max-width: 120px;
+        max-height: 120px;
+        border-radius: 0.75rem;
+        border: 1px solid #e2e8f0;
+        padding: 4px;
+    }
+    
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px solid #e2e8f0;
+    }
+    
+    .btn-submit {
+        background: linear-gradient(105deg, #302C4D 0%, #4c4585 100%);
+        border: none;
+        border-radius: 2rem;
+        padding: 10px 24px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        color: white;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+    
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(48, 44, 77, 0.25);
+    }
+    
+    .btn-cancel {
+        background: transparent;
+        border: 1px solid #e2e8f0;
+        border-radius: 2rem;
+        padding: 10px 24px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        color: var(--gray);
+        text-decoration: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .btn-cancel:hover {
+        border-color: #dc2626;
+        color: #dc2626;
+    }
+    
+    /* Help Text */
+    .help-text {
+        font-size: 0.65rem;
+        color: var(--gray);
+        margin-top: 4px;
+        display: block;
+    }
+    
+    /* Footer */
+    .footer {
+        background-color: #18282b;
+        color: #ffffff;
+        width: 100%;
+        margin-top: auto;
+        padding: 0;
+    }
+    
+    .footer .footer-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 15px 20px 12px 20px;
+    }
+    
+    .footer h5 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+    
+    .footer p {
+        font-size: 0.7rem;
+        margin-bottom: 4px;
+        line-height: 1.4;
+        opacity: 0.8;
+    }
+    
+    .footer ul {
+        margin-bottom: 0;
+        padding-left: 0;
+    }
+    
+    .footer ul li {
+        margin-bottom: 4px;
+        list-style: none;
+    }
+    
+    .footer ul li a {
+        font-size: 0.7rem;
+        color: #a0a0a0;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+    
+    .footer ul li a:hover {
+        color: #f39c12;
+        padding-left: 3px;
+    }
+    
+    .footer .social-links {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    
+    .footer .social-icon {
+        width: 28px;
+        height: 28px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        color: white;
+        text-decoration: none;
+        font-size: 0.8rem;
+    }
+    
+    .footer .social-icon:hover {
+        background: #f39c12;
+        transform: translateY(-2px);
+    }
+    
+    /* Responsive */
+    @media (max-width: 640px) {
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        
+        .form-container {
+            padding: 0 15px;
+        }
+        
+        .form-card-body {
+            padding: 20px 16px;
+        }
+        
+        .section-header {
+            padding: 0 15px;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn-submit, .btn-cancel {
+            justify-content: center;
+        }
+        
+        .footer .footer-container {
+            padding: 12px 15px 10px 15px;
+        }
+        
+        .footer .col-md-4 {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        
+        .footer .col-md-4:last-child {
+            margin-bottom: 0;
+        }
+        
+        .footer .social-links {
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="content-area">
+    <div class="section-header">
+        <h2 class="section-title">Edit Product</h2>
+    </div>
+    
+    <div class="form-container">
+        <div class="form-card">
+            <div class="form-card-header">
+                <h3><i class="fas fa-edit"></i> Product Information</h3>
+            </div>
+            <div class="form-card-body">
+                <form method="POST" enctype="multipart/form-data" id="editProductForm">
+                    <!-- Product Name -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-tag"></i> Product Name 
+                            <span class="required">*</span>
+                        </label>
+                        <input type="text" name="name" class="form-control-custom" value="{{ product.name }}" required placeholder="e.g., iPhone 15 Pro Max">
+                    </div>
+                    
+                    <!-- Price Row -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-dollar-sign"></i> Selling Price 
+                                <span class="required">*</span>
+                            </label>
+                            <input type="number" step="0.01" name="price" id="price" class="form-control-custom" value="{{ product.price }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-tag"></i> Original Price
+                            </label>
+                            <input type="number" step="0.01" name="original_price" id="original_price" class="form-control-custom" value="{{ product.original_price or product.price }}">
+                            <span class="help-text">Leave empty if no discount</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Discount Percentage -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-percent"></i> Discount Percentage
+                        </label>
+                        <input type="number" name="discount_percent" id="discount_percent" class="form-control-custom" value="{{ product.discount_percent or 0 }}" min="0" max="100" step="1">
+                    </div>
+                    
+                    <!-- Discount Preview -->
+                    <div class="discount-preview" id="discountPreview">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                            <div>
+                                <span class="original-price" id="previewOriginal">NPR {{ (product.original_price or product.price) | round(2) }}</span>
+                                <span class="discounted-price" id="previewDiscounted">NPR {{ product.price | round(2) }}</span>
+                            </div>
+                            <div>
+                                <span class="save-amount" id="previewSave">Save NPR {{ ((product.original_price or product.price) - product.price) | round(2) }} ({{ product.discount_percent or 0 }}% off)</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-align-left"></i> Description 
+                            <span class="required">*</span>
+                        </label>
+                        <textarea name="description" class="form-control-custom" rows="4" required placeholder="Describe the product features, specifications, and benefits...">{{ product.description }}</textarea>
+                    </div>
+                    
+                    <!-- Category -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-folder"></i> Category 
+                            <span class="required">*</span>
+                        </label>
+                        <select name="category" class="form-control-custom" required>
+                            <option value="Mobile Phones" {% if product.category == 'Mobile Phones' %}selected{% endif %}>📱 Mobile Phones</option>
+                            <option value="Chargers" {% if product.category == 'Chargers' %}selected{% endif %}>🔋 Chargers</option>
+                            <option value="Earphones" {% if product.category == 'Earphones' %}selected{% endif %}>🎧 Earphones</option>
+                            <option value="Earbuds" {% if product.category == 'Earbuds' %}selected{% endif %}>🎵 Earbuds</option>
+                            <option value="Accessories" {% if product.category == 'Accessories' %}selected{% endif %}>🔌 Accessories</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Stock Quantity -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-boxes"></i> Stock Quantity 
+                            <span class="required">*</span>
+                        </label>
+                        <input type="number" name="stock" class="form-control-custom" value="{{ product.stock }}" required min="0">
+                        <span class="help-text">Number of units available for sale</span>
+                    </div>
+                    
+                    <!-- Current Image -->
+                    <div class="current-image-section">
+                        <div class="current-image-label">
+                            <i class="fas fa-image"></i> Current Image
+                        </div>
+                        {% if product.image %}
+                            <img src="{{ url_for('static', filename='uploads/' + product.image) }}" class="current-image" alt="{{ product.name }}">
+                        {% else %}
+                            <div style="font-size: 0.75rem; color: var(--gray);">No image uploaded</div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- New Image -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-upload"></i> Change Image
+                        </label>
+                        <input type="file" name="image" id="imageInput" class="form-control-custom" accept="image/*" style="padding: 8px 12px;">
+                        <span class="help-text">Leave empty to keep current image. Supported: JPG, PNG, GIF (Max 5MB)</span>
+                        <div id="newImagePreview" class="new-image-preview">
+                            <img id="previewImg" src="#" alt="New Image Preview">
+                            <span class="help-text" style="margin-top: 4px;">New image preview</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-save"></i> Update Product
+                        </button>
+                        <a href="{{ url_for('admin_dashboard') }}" class="btn-cancel">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Dhami Electronics</h5>
+                <p>Your one-stop shop for premium electronics.</p>
+                <p><i class="fas fa-map-marker-alt me-1"></i> Dhangadhi, Nepal</p>
+                <p><i class="fas fa-envelope me-1"></i> support@dhamielectronics.com</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Quick Links</h5>
+                <ul>
+                        <li><a href="{{ url_for('about') }}">About Us</a></li>
+    <li><a href="{{ url_for('returns_policy') }}">Returns Policy</a></li>
+    <li><a href="{{ url_for('privacy_policy') }}">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Follow Us</h5>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+                <p class="mt-2"><i class="fas fa-truck"></i> Free Shipping on orders above NPR 5000</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+// Discount preview calculation
+const priceInput = document.getElementById('price');
+const originalPriceInput = document.getElementById('original_price');
+const discountPercentInput = document.getElementById('discount_percent');
+const previewOriginal = document.getElementById('previewOriginal');
+const previewDiscounted = document.getElementById('previewDiscounted');
+const previewSave = document.getElementById('previewSave');
+
+function updateDiscountPreview() {
+    let price = parseFloat(priceInput.value) || 0;
+    let originalPrice = parseFloat(originalPriceInput.value) || price;
+    let discountPercent = parseFloat(discountPercentInput.value) || 0;
+    
+    // If discount percent is set, calculate price from original
+    if (discountPercent > 0 && originalPrice > 0) {
+        price = originalPrice - (originalPrice * discountPercent / 100);
+        priceInput.value = price.toFixed(2);
+    }
+    
+    // If price is less than original, calculate discount percent
+    if (price < originalPrice && originalPrice > 0 && price > 0) {
+        discountPercent = Math.round(((originalPrice - price) / originalPrice) * 100);
+        discountPercentInput.value = discountPercent;
+    }
+    
+    // Update preview
+    if (originalPrice > price && price > 0 && originalPrice > 0) {
+        previewOriginal.innerHTML = `NPR ${originalPrice.toFixed(2)}`;
+        previewDiscounted.innerHTML = `NPR ${price.toFixed(2)}`;
+        previewSave.innerHTML = `Save NPR ${(originalPrice - price).toFixed(2)} (${discountPercent}% off)`;
+    }
+}
+
+// New image preview
+const imageInput = document.getElementById('imageInput');
+const newImagePreview = document.getElementById('newImagePreview');
+const previewImg = document.getElementById('previewImg');
+
+imageInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            previewImg.src = event.target.result;
+            newImagePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        newImagePreview.style.display = 'none';
+    }
+});
+
+// Form validation before submit
+document.getElementById('editProductForm').addEventListener('submit', function(e) {
+    const price = parseFloat(priceInput.value);
+    const stock = parseInt(document.querySelector('input[name="stock"]').value);
+    const name = document.querySelector('input[name="name"]').value.trim();
+    const description = document.querySelector('textarea[name="description"]').value.trim();
+    
+    if (price <= 0) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid Price',
+            text: 'Please enter a valid selling price greater than 0.',
+            confirmButtonColor: '#dc2626'
+        });
+        return false;
+    }
+    
+    if (stock < 0) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid Stock',
+            text: 'Stock quantity cannot be negative.',
+            confirmButtonColor: '#dc2626'
+        });
+        return false;
+    }
+    
+    if (!name) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid Name',
+            text: 'Please enter a product name.',
+            confirmButtonColor: '#dc2626'
+        });
+        return false;
+    }
+    
+    // Show loading state
+    const submitBtn = document.querySelector('.btn-submit');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Updating Product...';
+});
+
+// Input event listeners
+priceInput.addEventListener('input', updateDiscountPreview);
+originalPriceInput.addEventListener('input', updateDiscountPreview);
+discountPercentInput.addEventListener('input', updateDiscountPreview);
+</script>
+{% endblock %}

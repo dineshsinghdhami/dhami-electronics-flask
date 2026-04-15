@@ -1,0 +1,1119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Fix for footer positioning - NO extra spaces */
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    
+    .main-content {
+        flex: 1 0 auto;
+        display: flex;
+        flex-direction: column;
+        margin-top: 70px; /* Add space for fixed navbar */
+    }
+    
+    .main-content .container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding-left: 0;
+        padding-right: 0;
+        margin: 0;
+        width: 100%;
+        min-height: auto;
+    }
+    
+    /* Make content area flexible to push footer down */
+    .content-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(135deg, #f6f9fc 0%, #eef2f5 100%);
+        padding: 20px 0 0 0;
+        margin-bottom: 0;
+    }
+    
+    /* Orders container takes remaining space */
+    .orders-container {
+        flex: 1;
+        padding: 0 20px;
+    }
+    
+    /* Empty orders card takes full height */
+    .empty-orders-card {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: white;
+        border-radius: 1rem;
+        padding: 60px 20px;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+        margin: 0;
+        min-height: 400px;
+    }
+    
+    /* Footer stays at bottom */
+    .footer {
+        background-color: #18282b;
+        color: #ffffff;
+        width: 100%;
+        flex-shrink: 0;
+        margin-top: 0;
+        padding: 0;
+        position: relative;
+        z-index: 1;
+    }
+    
+    :root {
+        --primary: #2874f0;
+        --secondary: #fb641b;
+        --dark: #212121;
+        --light: #f5f5f5;
+        --gray: #878787;
+        --white: #ffffff;
+    }
+    
+    /* Section Header */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 0 20px;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 0;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 0;
+        position: relative;
+        padding-left: 12px;
+    }
+    
+    .section-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 18px;
+        background: #E66239;
+        border-radius: 2px;
+    }
+    
+    /* Filter Tabs */
+    .order-tabs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    .order-tab {
+        padding: 6px 16px;
+        border-radius: 2rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        background: white;
+        border: 1px solid #e2e8f0;
+        color: var(--gray);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .order-tab:hover {
+        border-color: #E66239;
+        color: #E66239;
+    }
+    
+    .order-tab.active {
+        background: linear-gradient(105deg, #302C4D 0%, #4c4585 100%);
+        color: white;
+        border-color: transparent;
+    }
+    
+    /* Order Card */
+    .order-card {
+        background: var(--white);
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 20px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .order-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+    
+    /* Order Header */
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 20px;
+        background: #fafcff;
+        border-bottom: 1px solid #e2e8f0;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    .order-info {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .order-number {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--dark);
+    }
+    
+    .order-number i {
+        color: #E66239;
+        margin-right: 6px;
+    }
+    
+    .order-date {
+        font-size: 0.7rem;
+        color: var(--gray);
+    }
+    
+    .order-date i {
+        margin-right: 4px;
+    }
+    
+    /* Status Badge */
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 2rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .status-delivered {
+        background: #ecfdf5;
+        color: #10b981;
+    }
+    
+    .status-processing {
+        background: #fef3c7;
+        color: #d97706;
+    }
+    
+    .status-shipped {
+        background: #e0f2fe;
+        color: #0284c7;
+    }
+    
+    .status-cancelled {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+    
+    .status-pending {
+        background: #f1f5f9;
+        color: #64748b;
+    }
+    
+    /* Cancel Timer Warning */
+    .cancel-warning {
+        font-size: 0.65rem;
+        color: #dc2626;
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .cancel-timer {
+        font-weight: 600;
+    }
+    
+    /* Order Body */
+    .order-body {
+        padding: 16px 20px;
+    }
+    
+    /* Items Table */
+    .order-items-table {
+        width: 100%;
+        margin-bottom: 16px;
+    }
+    
+    .order-item-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px dashed #e2e8f0;
+    }
+    
+    .order-item-row:last-child {
+        border-bottom: none;
+    }
+    
+    .order-item-product {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 2;
+    }
+    
+    .order-item-img {
+        width: 48px;
+        height: 48px;
+        object-fit: cover;
+        border-radius: 0.5rem;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 4px;
+    }
+    
+    .order-item-details {
+        flex: 1;
+    }
+    
+    .order-item-name {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--dark);
+        margin-bottom: 4px;
+        line-height: 1.3;
+    }
+    
+    .order-item-meta {
+        font-size: 0.7rem;
+        color: var(--gray);
+    }
+    
+    .order-item-qty {
+        font-size: 0.8rem;
+        color: var(--gray);
+        min-width: 60px;
+        text-align: center;
+    }
+    
+    .order-item-price {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #E66239;
+        min-width: 100px;
+        text-align: right;
+    }
+    
+    /* Order Footer */
+    .order-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 16px;
+        margin-top: 8px;
+        border-top: 1px solid #e2e8f0;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    .order-total {
+        font-size: 0.9rem;
+    }
+    
+    .order-total span {
+        font-weight: 600;
+        color: var(--dark);
+    }
+    
+    .order-total strong {
+        font-size: 1rem;
+        color: #E66239;
+        margin-left: 8px;
+    }
+    
+    .order-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .order-action-btn {
+        padding: 6px 14px;
+        border-radius: 2rem;
+        font-size: 0.7rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        border: none;
+    }
+    
+    .order-action-btn-primary {
+        background: linear-gradient(105deg, #302C4D 0%, #4c4585 100%);
+        color: white;
+    }
+    
+    .order-action-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(48, 44, 77, 0.25);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .order-action-btn-outline {
+        background: transparent;
+        border: 1px solid #e2e8f0;
+        color: var(--gray);
+    }
+    
+    .order-action-btn-outline:hover:not(:disabled) {
+        border-color: #dc2626;
+        color: #dc2626;
+    }
+    
+    .order-action-btn-outline:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .order-action-btn-danger {
+        background: #dc2626;
+        color: white;
+        border: none;
+    }
+    
+    .order-action-btn-danger:hover:not(:disabled) {
+        background: #b91c1c;
+        transform: translateY(-2px);
+    }
+    
+    .order-action-btn-danger:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    /* Tracking Timeline Styles */
+    .tracking-timeline {
+        padding: 10px 0;
+    }
+    
+    .timeline-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 24px;
+        position: relative;
+    }
+    
+    .timeline-step:not(:last-child)::before {
+        content: '';
+        position: absolute;
+        left: 14px;
+        top: 32px;
+        width: 2px;
+        height: calc(100% - 10px);
+        background: #e2e8f0;
+    }
+    
+    .timeline-step.completed:not(:last-child)::before {
+        background: #10b981;
+    }
+    
+    .timeline-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        background: #f1f5f9;
+        color: #94a3b8;
+        z-index: 1;
+        position: relative;
+    }
+    
+    .timeline-step.completed .timeline-icon {
+        background: #10b981;
+        color: white;
+    }
+    
+    .timeline-step.active .timeline-icon {
+        background: #f59e0b;
+        color: white;
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+    }
+    
+    .timeline-content {
+        flex: 1;
+    }
+    
+    .timeline-title {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+    }
+    
+    .timeline-step.completed .timeline-title {
+        color: #10b981;
+    }
+    
+    .timeline-step.active .timeline-title {
+        color: #f59e0b;
+    }
+    
+    .timeline-date {
+        font-size: 0.7rem;
+        color: #94a3b8;
+    }
+    
+    .timeline-desc {
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-top: 4px;
+    }
+    
+    /* Empty Orders */
+    .empty-orders-icon {
+        font-size: 4rem;
+        color: #cbd5e1;
+        margin-bottom: 20px;
+    }
+    
+    .empty-orders-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 8px;
+    }
+    
+    .empty-orders-text {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        margin-bottom: 24px;
+    }
+    
+    .shop-now-btn {
+        background: linear-gradient(105deg, #302C4D 0%, #4c4585 100%);
+        border: none;
+        border-radius: 2rem;
+        padding: 10px 24px;
+        font-size: 0.85rem;
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+    
+    .shop-now-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(48, 44, 77, 0.25);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .no-result-message {
+        margin: 0;
+    }
+    
+    /* Footer */
+    .footer .footer-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 15px 20px 12px 20px;
+    }
+    
+    .footer h5 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+    
+    .footer p {
+        font-size: 0.7rem;
+        margin-bottom: 4px;
+        line-height: 1.4;
+        opacity: 0.8;
+    }
+    
+    .footer ul {
+        margin-bottom: 0;
+        padding-left: 0;
+    }
+    
+    .footer ul li {
+        margin-bottom: 4px;
+        list-style: none;
+    }
+    
+    .footer ul li a {
+        font-size: 0.7rem;
+        color: #a0a0a0;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+    
+    .footer ul li a:hover {
+        color: #f39c12;
+        padding-left: 3px;
+    }
+    
+    .footer .social-links {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    
+    .footer .social-icon {
+        width: 28px;
+        height: 28px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        color: white;
+        text-decoration: none;
+        font-size: 0.8rem;
+    }
+    
+    .footer .social-icon:hover {
+        background: #f39c12;
+        transform: translateY(-2px);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .main-content {
+            margin-top: 60px;
+        }
+        
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 0 15px;
+        }
+        
+        .orders-container {
+            padding: 0 15px;
+        }
+        
+        .order-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .order-info {
+            width: 100%;
+            justify-content: space-between;
+        }
+        
+        .order-item-product {
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .order-item-img {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .order-item-name {
+            font-size: 0.75rem;
+        }
+        
+        .order-item-qty {
+            min-width: 50px;
+            font-size: 0.7rem;
+        }
+        
+        .order-item-price {
+            min-width: 80px;
+            font-size: 0.75rem;
+        }
+        
+        .order-footer {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .order-actions {
+            width: 100%;
+        }
+        
+        .order-action-btn {
+            flex: 1;
+            text-align: center;
+            justify-content: center;
+        }
+        
+        .empty-orders-card {
+            margin: 0;
+            min-height: 300px;
+        }
+        
+        .footer .footer-container {
+            padding: 12px 15px 10px 15px;
+        }
+        
+        .footer .col-md-4 {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        
+        .footer .col-md-4:last-child {
+            margin-bottom: 0;
+        }
+        
+        .footer .social-links {
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="content-area">
+    <div class="section-header">
+        <h2 class="section-title">My Orders</h2>
+        <div class="order-tabs">
+            <button class="order-tab active" data-filter="all">All Orders</button>
+            <button class="order-tab" data-filter="pending">Pending</button>
+            <button class="order-tab" data-filter="processing">Processing</button>
+            <button class="order-tab" data-filter="shipped">Shipped</button>
+            <button class="order-tab" data-filter="delivered">Delivered</button>
+            <button class="order-tab" data-filter="cancelled">Cancelled</button>
+        </div>
+    </div>
+    
+    <div class="orders-container" id="ordersContainer">
+        {% if orders %}
+            {% for order in orders %}
+            {% set can_cancel = order.status in ['pending', 'processing'] %}
+            {% set order_age_hours = ((now.utcnow() - order.created_at).total_seconds() / 3600) if now else 0 %}
+            {% set cancel_enabled = can_cancel and order_age_hours < 1 %}
+            <div class="order-card" data-status="{{ order.status|lower }}" data-order-id="{{ order.id }}" data-created-at="{{ order.created_at.isoformat() }}" data-order-status="{{ order.status|lower }}">
+                <div class="order-header">
+                    <div class="order-info">
+                        <div class="order-number">
+                            <i class="fas fa-hashtag"></i> Order #{{ order.id }}
+                        </div>
+                        <div class="order-date">
+                            <i class="far fa-calendar-alt"></i> {{ order.created_at.strftime('%b %d, %Y • %I:%M %p') }}
+                        </div>
+                    </div>
+                    <div class="status-badge 
+                        {% if order.status == 'delivered' %}status-delivered
+                        {% elif order.status == 'processing' %}status-processing
+                        {% elif order.status == 'shipped' %}status-shipped
+                        {% elif order.status == 'cancelled' %}status-cancelled
+                        {% else %}status-pending{% endif %}">
+                        <i class="fas 
+                            {% if order.status == 'delivered' %}fa-check-circle
+                            {% elif order.status == 'processing' %}fa-spinner fa-pulse
+                            {% elif order.status == 'shipped' %}fa-shipping-fast
+                            {% elif order.status == 'cancelled' %}fa-times-circle
+                            {% else %}fa-clock{% endif %}"></i>
+                        {{ order.status|capitalize }}
+                    </div>
+                </div>
+                
+                <div class="order-body">
+                    <div class="order-items-table">
+                        {% for item in order.items %}
+                        <div class="order-item-row">
+                            <div class="order-item-product">
+                                {% if item.product and item.product.image %}
+                                    <img src="{{ url_for('static', filename='uploads/' + item.product.image) }}" class="order-item-img" alt="{{ item.product.name }}">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/48x48?text=Deleted" class="order-item-img" alt="Product deleted">
+                                {% endif %}
+                                <div class="order-item-details">
+                                    <div class="order-item-name">
+                                        {% if item.product %}
+                                            {{ item.product.name[:45] }}{% if item.product.name|length > 45 %}...{% endif %}
+                                        {% else %}
+                                            <span style="color: #94a3b8;">[Product Deleted]</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="order-item-meta">
+                                        {% if item.product %}
+                                            NPR {{ "%.0f"|format(item.price) }} each
+                                        {% else %}
+                                            <span style="color: #94a3b8;">Product no longer available</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="order-item-qty">x{{ item.quantity }}</div>
+                            <div class="order-item-price">NPR {{ "%.0f"|format(item.price * item.quantity) }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="order-footer">
+                        <div class="order-total">
+                            <span>Total Amount:</span>
+                            <strong>NPR {{ "%.0f"|format(order.total_amount) }}</strong>
+                        </div>
+                        <div class="order-actions">
+                            <button class="order-action-btn order-action-btn-outline" onclick="trackOrder({{ order.id }}, '{{ order.status|lower }}')">
+                                <i class="fas fa-map-marker-alt"></i> Track
+                            </button>
+                            {% if order.status not in ['cancelled', 'delivered'] %}
+                                {% if cancel_enabled %}
+                                    <button class="order-action-btn order-action-btn-danger" onclick="cancelOrder({{ order.id }})">
+                                        <i class="fas fa-times"></i> Cancel Order
+                                    </button>
+                                {% elif can_cancel %}
+                                    <button class="order-action-btn order-action-btn-outline" disabled title="Cancellation only available within 1 hour of placing order">
+                                        <i class="fas fa-clock"></i> Cancel Unavailable
+                                    </button>
+                                    <div class="cancel-warning">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <span>Cancellation period expired. <a href="#" onclick="contactSupport()" style="color:#E66239;">Contact support</a></span>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            {% if order.items and order.items|length > 0 and order.items[0].product %}
+                                <a href="{{ url_for('product_detail', id=order.items[0].product_id) }}" class="order-action-btn order-action-btn-primary">
+                                    <i class="fas fa-redo-alt"></i> Buy Again
+                                </a>
+                            {% else %}
+                                <button class="order-action-btn order-action-btn-outline" disabled>
+                                    <i class="fas fa-ban"></i> Unavailable
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-orders-card">
+                <div class="empty-orders-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <div class="empty-orders-title">No orders yet</div>
+                <div class="empty-orders-text">Looks like you haven't placed any orders.</div>
+                <a href="{{ url_for('index') }}" class="shop-now-btn">
+                    Start Shopping <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Dhami Electronics</h5>
+                <p>Your one-stop shop for premium electronics.</p>
+                <p><i class="fas fa-map-marker-alt me-1"></i> Dhangadhi, Nepal</p>
+                <p><i class="fas fa-envelope me-1"></i> support@dhamielectronics.com</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Quick Links</h5>
+                <ul>
+                        <li><a href="{{ url_for('about') }}">About Us</a></li>
+    <li><a href="{{ url_for('returns_policy') }}">Returns Policy</a></li>
+    <li><a href="{{ url_for('privacy_policy') }}">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Follow Us</h5>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+                <p class="mt-2"><i class="fas fa-truck"></i> Free Shipping on orders above NPR 5000</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+// Order Filtering by Status
+document.querySelectorAll('.order-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+        document.querySelectorAll('.order-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        
+        const filterStatus = this.getAttribute('data-filter');
+        const orders = document.querySelectorAll('.order-card');
+        let visibleCount = 0;
+        
+        orders.forEach(order => {
+            const orderStatus = order.getAttribute('data-status');
+            if (filterStatus === 'all' || orderStatus === filterStatus) {
+                order.style.display = 'block';
+                visibleCount++;
+            } else {
+                order.style.display = 'none';
+            }
+        });
+        
+        const ordersContainer = document.getElementById('ordersContainer');
+        const existingNoResult = document.querySelector('.no-result-message');
+        
+        if (visibleCount === 0 && orders.length > 0) {
+            if (existingNoResult) existingNoResult.remove();
+            
+            const noResultDiv = document.createElement('div');
+            noResultDiv.className = 'empty-orders-card no-result-message';
+            noResultDiv.style.margin = '0';
+            noResultDiv.innerHTML = `
+                <div class="empty-orders-icon">
+                    <i class="fas fa-filter"></i>
+                </div>
+                <div class="empty-orders-title">No orders found</div>
+                <div class="empty-orders-text">No orders with status "${filterStatus}" found.</div>
+                <button class="shop-now-btn" onclick="document.querySelector('.order-tab[data-filter=\'all\']').click()">
+                    View All Orders <i class="fas fa-arrow-right"></i>
+                </button>
+            `;
+            ordersContainer.appendChild(noResultDiv);
+        } else if (existingNoResult) {
+            existingNoResult.remove();
+        }
+    });
+});
+
+// Dynamic Track Order based on actual order status
+function trackOrder(orderId, orderStatus) {
+    const orderDate = new Date().toLocaleDateString();
+    
+    // Define timeline steps based on status
+    const steps = [
+        { name: 'Order Placed', key: 'pending', icon: 'fa-check', description: 'Your order has been confirmed' },
+        { name: 'Processing', key: 'processing', icon: 'fa-box', description: 'Your order is being prepared' },
+        { name: 'Shipped', key: 'shipped', icon: 'fa-truck', description: 'Your order is on the way' },
+        { name: 'Delivered', key: 'delivered', icon: 'fa-home', description: 'Your order has been delivered' }
+    ];
+    
+    // Status order mapping
+    const statusOrder = ['pending', 'processing', 'shipped', 'delivered'];
+    const currentIndex = statusOrder.indexOf(orderStatus);
+    
+    let timelineHtml = '<div class="tracking-timeline">';
+    
+    steps.forEach((step, index) => {
+        let stepClass = '';
+        let isCompleted = index < currentIndex;
+        let isActive = index === currentIndex;
+        
+        if (isCompleted) {
+            stepClass = 'completed';
+        } else if (isActive) {
+            stepClass = 'active';
+        }
+        
+        let statusText = '';
+        if (isCompleted) {
+            statusText = '<span style="color:#10b981; font-size:0.7rem;">✓ Completed</span>';
+        } else if (isActive) {
+            statusText = '<span style="color:#f59e0b; font-size:0.7rem;">● In Progress</span>';
+        } else {
+            statusText = '<span style="color:#94a3b8; font-size:0.7rem;">○ Pending</span>';
+        }
+        
+        timelineHtml += `
+            <div class="timeline-step ${stepClass}">
+                <div class="timeline-icon">
+                    <i class="fas ${step.icon}"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-title">${step.name} ${statusText}</div>
+                    ${isCompleted || isActive ? `<div class="timeline-date">${orderDate}</div>` : ''}
+                    <div class="timeline-desc">${step.description}</div>
+                </div>
+            </div>
+        `;
+    });
+    
+    timelineHtml += '</div>';
+    
+    // Add cancellation info if order is cancelled
+    if (orderStatus === 'cancelled') {
+        timelineHtml = `
+            <div style="text-align: center; padding: 20px;">
+                <i class="fas fa-times-circle" style="font-size: 48px; color: #dc2626; margin-bottom: 16px;"></i>
+                <h3 style="color: #dc2626;">Order Cancelled</h3>
+                <p>This order has been cancelled. Please contact support if you have any questions.</p>
+            </div>
+        `;
+    }
+    
+    // Get status color for header
+    let statusColor = '#64748b';
+    let statusIcon = 'fa-clock';
+    if (orderStatus === 'delivered') {
+        statusColor = '#10b981';
+        statusIcon = 'fa-check-circle';
+    } else if (orderStatus === 'shipped') {
+        statusColor = '#0284c7';
+        statusIcon = 'fa-shipping-fast';
+    } else if (orderStatus === 'processing') {
+        statusColor = '#d97706';
+        statusIcon = 'fa-spinner fa-pulse';
+    } else if (orderStatus === 'cancelled') {
+        statusColor = '#dc2626';
+        statusIcon = 'fa-times-circle';
+    }
+    
+    Swal.fire({
+        title: `Order #${orderId}`,
+        html: `
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; background: ${statusColor}10; border-radius: 50px; color: ${statusColor};">
+                    <i class="fas ${statusIcon}"></i>
+                    <span style="font-weight: 600;">${orderStatus.toUpperCase()}</span>
+                </div>
+            </div>
+            ${timelineHtml}
+        `,
+        icon: 'info',
+        confirmButtonText: 'Close',
+        confirmButtonColor: '#302C4D',
+        width: '500px'
+    });
+}
+
+// Contact Support
+function contactSupport() {
+    Swal.fire({
+        title: 'Contact Support',
+        text: 'Please contact our support team to cancel this order.',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Email Support',
+        cancelButtonText: 'Close',
+        confirmButtonColor: '#E66239'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'mailto:support@dhamielectronics.com?subject=Order%20Cancellation%20Request';
+        }
+    });
+}
+
+// Cancel Order - With AJAX call to backend
+function cancelOrder(orderId) {
+    // First check if order is within 1 hour
+    const orderCard = document.querySelector(`.order-card[data-order-id="${orderId}"]`);
+    const createdAt = orderCard ? orderCard.getAttribute('data-created-at') : null;
+    
+    if (createdAt) {
+        const orderTime = new Date(createdAt);
+        const now = new Date();
+        const hoursDiff = (now - orderTime) / (1000 * 60 * 60);
+        
+        if (hoursDiff >= 1) {
+            Swal.fire({
+                title: 'Cancellation Not Available',
+                html: 'Orders can only be cancelled within <strong>1 hour</strong> of placing the order.<br><br>Please contact support for assistance.',
+                icon: 'warning',
+                confirmButtonText: 'Contact Support',
+                confirmButtonColor: '#E66239',
+                showCancelButton: true,
+                cancelButtonText: 'Close'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'mailto:support@dhamielectronics.com?subject=Order%20Cancellation%20Request%20%23' + orderId;
+                }
+            });
+            return;
+        }
+    }
+    
+    Swal.fire({
+        title: 'Cancel Order?',
+        text: 'Are you sure you want to cancel this order? This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Yes, cancel order',
+        cancelButtonText: 'No, keep it'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Show loading state
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Cancelling your order',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Make AJAX call to cancel order
+            fetch('/cancel_order/' + orderId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Cancelled!',
+                        text: 'Your order has been cancelled successfully.',
+                        icon: 'success',
+                        confirmButtonColor: '#10b981'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Cannot Cancel',
+                        text: data.error || 'This order cannot be cancelled at this time.',
+                        icon: 'error',
+                        confirmButtonColor: '#dc2626'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Something went wrong. Please try again or contact support.',
+                    icon: 'error',
+                    confirmButtonColor: '#dc2626'
+                });
+            });
+        }
+    });
+}
+</script>
+{% endblock %}

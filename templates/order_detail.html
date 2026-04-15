@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0">Order #{{ order.id }} Details</h3>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5>Order Information</h5>
+                    <p><strong>Order Date:</strong> {{ order.created_at.strftime('%Y-%m-%d %H:%M:%S') }}<br>
+                    <strong>Status:</strong> 
+                        <span class="badge bg-{% if order.status == 'pending' %}warning{% elif order.status == 'delivered' %}success{% else %}info{% endif %}">
+                            {{ order.status.upper() }}
+                        </span><br>
+                    <strong>Total Amount:</strong> ${{ "%.2f"|format(order.total_amount) }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Shipping Information</h5>
+                    <p><strong>Phone:</strong> {{ order.phone or 'N/A' }}<br>
+                    <strong>Address:</strong> {{ order.shipping_address or 'No address provided' }}</p>
+                </div>
+            </div>
+            
+            <h5>Order Items</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items %}
+                        <tr>
+                            <td>{{ item.product.name }}</td>
+                            <td>${{ "%.2f"|format(item.price) }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>${{ "%.2f"|format(item.price * item.quantity) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <a href="{{ url_for('orders') }}" class="btn btn-secondary">Back to Orders</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

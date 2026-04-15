@@ -1,0 +1,589 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Fix for footer positioning */
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    
+    .main-content {
+        flex: 1 0 auto;
+        display: flex;
+        flex-direction: column;
+        margin-top: 70px;
+    }
+    
+    .main-content .container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding-left: 0;
+        padding-right: 0;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        min-height: auto;
+    }
+    
+    .content-area {
+        flex: 1;
+        background: linear-gradient(135deg, #f6f9fc 0%, #eef2f5 100%);
+        padding: 40px 0;
+        width: 100%;
+    }
+    
+    .footer {
+        background-color: #18282b;
+        color: #ffffff;
+        width: 100%;
+        flex-shrink: 0;
+        margin-top: 0;
+        padding: 0;
+    }
+    
+    .footer .footer-container {
+        max-width: 100%;
+        width: 100%;
+        margin: 0 auto;
+        padding: 15px 20px 12px 20px;
+    }
+    
+    .footer h5 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+    
+    .footer p {
+        font-size: 0.7rem;
+        margin-bottom: 4px;
+        line-height: 1.4;
+        opacity: 0.8;
+    }
+    
+    .footer ul {
+        margin-bottom: 0;
+        padding-left: 0;
+    }
+    
+    .footer ul li {
+        margin-bottom: 4px;
+        list-style: none;
+    }
+    
+    .footer ul li a {
+        font-size: 0.7rem;
+        color: #a0a0a0;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+    
+    .footer ul li a:hover {
+        color: #f39c12;
+        padding-left: 3px;
+    }
+    
+    .footer .social-links {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    
+    .footer .social-icon {
+        width: 28px;
+        height: 28px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        color: white;
+        text-decoration: none;
+        font-size: 0.8rem;
+    }
+    
+    .footer .social-icon:hover {
+        background: #f39c12;
+        transform: translateY(-2px);
+    }
+    
+    :root {
+        --primary: #2874f0;
+        --secondary: #fb641b;
+        --dark: #212121;
+        --light: #f5f5f5;
+        --gray: #878787;
+        --white: #ffffff;
+    }
+    
+    .about-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0;
+        width: 100%;
+    }
+    
+    /* Hero Section */
+    .about-hero {
+        text-align: center;
+        padding: 60px 20px;
+        background: linear-gradient(135deg, #302C4D 0%, #4c4585 100%);
+        border-radius: 0;
+        margin-bottom: 40px;
+        color: white;
+        width: 100%;
+    }
+    
+    .about-hero h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+    }
+    
+    .about-hero p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    /* Section Styles */
+    .about-section {
+        background: white;
+        border-radius: 0;
+        padding: 40px;
+        margin-bottom: 0;
+        border: none;
+        border-bottom: 1px solid #e2e8f0;
+        transition: transform 0.3s ease;
+        width: 100%;
+    }
+    
+    .about-section:last-child {
+        border-bottom: none;
+    }
+    
+    .about-section:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .section-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #302C4D 0%, #4c4585 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 24px;
+    }
+    
+    .section-icon i {
+        font-size: 30px;
+        color: white;
+    }
+    
+    .about-section h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 20px;
+        position: relative;
+        padding-left: 16px;
+    }
+    
+    .about-section h2::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 24px;
+        background: #E66239;
+        border-radius: 2px;
+    }
+    
+    .about-section p {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: var(--gray);
+        margin-bottom: 16px;
+    }
+    
+    /* Values Grid */
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+    }
+    
+    .value-card {
+        text-align: center;
+        padding: 30px 20px;
+        background: #f8fafc;
+        border-radius: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .value-card:hover {
+        transform: translateY(-5px);
+        background: white;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+    
+    .value-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #302C4D 0%, #4c4585 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+    }
+    
+    .value-icon i {
+        font-size: 24px;
+        color: white;
+    }
+    
+    .value-card h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 12px;
+    }
+    
+    .value-card p {
+        font-size: 0.85rem;
+        color: var(--gray);
+        line-height: 1.5;
+    }
+    
+    /* Team Section */
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+    }
+    
+    .team-member {
+        text-align: center;
+        padding: 20px;
+        background: #f8fafc;
+        border-radius: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .team-member:hover {
+        transform: translateY(-5px);
+        background: white;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+    
+    .member-avatar {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, #302C4D 0%, #4c4585 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+    }
+    
+    .member-avatar i {
+        font-size: 50px;
+        color: white;
+    }
+    
+    .team-member h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 4px;
+    }
+    
+    .team-member p {
+        font-size: 0.8rem;
+        color: #E66239;
+        margin-bottom: 8px;
+    }
+    
+    .team-member small {
+        font-size: 0.7rem;
+        color: var(--gray);
+    }
+    
+    /* Stats Section */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+        text-align: center;
+    }
+    
+    .stat-item h3 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #E66239;
+        margin-bottom: 8px;
+    }
+    
+    .stat-item p {
+        font-size: 0.85rem;
+        color: var(--gray);
+        margin: 0;
+    }
+    
+    /* Remove gaps on mobile */
+    @media (max-width: 768px) {
+        .main-content {
+            margin-top: 60px;
+        }
+        
+        .about-hero {
+            border-radius: 0;
+            padding: 40px 15px;
+        }
+        
+        .about-hero h1 {
+            font-size: 1.8rem;
+        }
+        
+        .about-hero p {
+            font-size: 0.9rem;
+        }
+        
+        .about-section {
+            padding: 25px 15px;
+        }
+        
+        .about-section h2 {
+            font-size: 1.2rem;
+        }
+        
+        .values-grid,
+        .team-grid {
+            gap: 15px;
+        }
+        
+        .footer .footer-container {
+            padding: 12px 15px 10px 15px;
+        }
+        
+        .footer .col-md-4 {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        
+        .footer .col-md-4:last-child {
+            margin-bottom: 0;
+        }
+        
+        .footer .social-links {
+            justify-content: center;
+        }
+    }
+    
+    /* For very large screens, center the content */
+    @media (min-width: 1400px) {
+        .about-section {
+            padding: 40px 80px;
+        }
+    }
+</style>
+
+<div class="content-area">
+    <div class="about-container">
+        <!-- Hero Section -->
+        <div class="about-hero">
+            <h1>About Dhami Electronics</h1>
+            <p>Your trusted partner for premium electronics in Nepal since 2020</p>
+        </div>
+        
+        <!-- Our Story -->
+        <div class="about-section">
+            <div class="section-icon">
+                <i class="fas fa-store"></i>
+            </div>
+            <h2>Our Story</h2>
+            <p>Founded in 2020, Dhami Electronics started with a simple mission: to provide high-quality electronics at affordable prices to the people of Nepal. What began as a small local shop in Dhangadhi has grown into a trusted online destination for electronics enthusiasts across the country.</p>
+            <p>We understand that buying electronics is an important decision. That's why we carefully curate our product selection, ensuring every item meets our strict quality standards. From the latest gadgets to essential home electronics, we bring you products that combine innovation, reliability, and value.</p>
+            <p>Today, Dhami Electronics serves thousands of satisfied customers, offering a seamless shopping experience from browsing to doorstep delivery. We're proud to be part of Nepal's growing digital economy and committed to making quality electronics accessible to everyone.</p>
+        </div>
+        
+        <!-- Our Mission -->
+        <div class="about-section">
+            <div class="section-icon">
+                <i class="fas fa-bullseye"></i>
+            </div>
+            <h2>Our Mission</h2>
+            <p>To empower Nepali consumers with access to genuine, high-quality electronics through a transparent, reliable, and customer-focused shopping experience. We strive to bridge the gap between international brands and local consumers by offering competitive prices, authentic products, and exceptional service.</p>
+        </div>
+        
+        <!-- Our Values -->
+        <div class="about-section">
+            <div class="section-icon">
+                <i class="fas fa-gem"></i>
+            </div>
+            <h2>Our Values</h2>
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Authenticity</h3>
+                    <p>100% genuine products with manufacturer warranty</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Customer First</h3>
+                    <p>Your satisfaction is our top priority</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3>Reliability</h3>
+                    <p>Fast and secure delivery across Nepal</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <h3>Value</h3>
+                    <p>Best prices with regular offers and discounts</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Why Choose Us -->
+        <div class="about-section">
+            <div class="section-icon">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <h2>Why Choose Dhami Electronics?</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>5000+</h3>
+                    <p>Happy Customers</p>
+                </div>
+                <div class="stat-item">
+                    <h3>1000+</h3>
+                    <p>Products Sold</p>
+                </div>
+                <div class="stat-item">
+                    <h3>50+</h3>
+                    <p>Brands Available</p>
+                </div>
+                <div class="stat-item">
+                    <h3>24/7</h3>
+                    <p>Customer Support</p>
+                </div>
+            </div>
+            <p style="margin-top: 30px;">At Dhami Electronics, we go beyond just selling products. We provide:</p>
+            <ul style="color: var(--gray); line-height: 1.8; padding-left: 20px;">
+                <li>✓ Genuine products with official warranty</li>
+                <li>✓ Secure payment options (Cash on Delivery, Bank Transfer, Mobile Payment)</li>
+                <li>✓ Fast and tracked delivery across Nepal</li>
+                <li>✓ Easy 7-day return policy</li>
+                <li>✓ Dedicated customer support team</li>
+                <li>✓ Regular discounts and seasonal offers</li>
+            </ul>
+        </div>
+        
+        <!-- Our Team -->
+        <div class="about-section">
+            <div class="section-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h2>Meet Our Team</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h3>Ramesh Dhami</h3>
+                    <p>Founder & CEO</p>
+                    <small>10+ years in electronics retail</small>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h3>Sita Dhami</h3>
+                    <p>Operations Manager</p>
+                    <small>Ensuring smooth deliveries</small>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h3>Hari Sharma</h3>
+                    <p>Customer Support Lead</p>
+                    <small>Always here to help</small>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h3>Bikram Thapa</h3>
+                    <p>Technical Specialist</p>
+                    <small>Product expert</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Dhami Electronics</h5>
+                <p>Your one-stop shop for premium electronics.</p>
+                <p><i class="fas fa-map-marker-alt me-1"></i> Dhangadhi, Nepal</p>
+                <p><i class="fas fa-envelope me-1"></i> support@dhamielectronics.com</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Quick Links</h5>
+                <ul>
+                    <li><a href="{{ url_for('about') }}">About Us</a></li>
+                    <li><a href="{{ url_for('returns_policy') }}">Returns Policy</a></li>
+                    <li><a href="{{ url_for('privacy_policy') }}">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Follow Us</h5>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+                <p class="mt-2"><i class="fas fa-truck"></i> Free Shipping on orders above NPR 5000</p>
+            </div>
+        </div>
+    </div>
+</footer>
+{% endblock %}

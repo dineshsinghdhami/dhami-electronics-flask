@@ -1,0 +1,557 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Hide footer on register page */
+    .footer {
+        display: none !important;
+    }
+    
+    /* Center the register form */
+    .register-wrapper {
+    min-height: calc(100vh - 76px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: transparent; /* 🔥 remove outer box look */
+}
+    
+    /* Modern Card Styling */
+    .register-card {
+        max-width: 460px;
+        width: 100%;
+        border: none;
+        border-radius: 2rem;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(0px);
+        box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.02);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .register-card:hover {
+        box-shadow: 0 30px 55px -15px rgba(0, 0, 0, 0.25);
+    }
+    
+    .register-card .card-body {
+        padding: 2.2rem 2rem !important;
+    }
+    
+    @media (max-width: 480px) {
+        .register-card .card-body {
+            padding: 1.75rem 1.5rem !important;
+        }
+    }
+    
+    /* Logo & Brand */
+    .logo-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.65rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .logo-svg {
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+    }
+    
+    .brand-text {
+        font-weight: 700;
+        font-size: 1.45rem;
+        letter-spacing: -0.3px;
+        background: linear-gradient(120deg, #302C4D, #4a437a);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+    
+    h1 {
+        font-weight: 600;
+        font-size: 1.6rem;
+        letter-spacing: -0.3px;
+        color: #1a1e2b;
+    }
+    
+    /* Form Labels */
+    .form-label {
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: #2c3e4e;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Form Controls */
+    .form-control {
+        border-radius: 1rem;
+        padding: 0.7rem 1rem;
+        font-size: 0.95rem;
+        border: 1px solid #e2e8f0;
+        background-color: #ffffff;
+        transition: all 0.2s ease;
+        box-shadow: none;
+    }
+    
+    .form-control:focus {
+        border-color: #E66239;
+        box-shadow: 0 0 0 4px rgba(230, 98, 57, 0.15);
+        outline: none;
+    }
+    
+    /* Primary Button */
+    .btn-register {
+        background: linear-gradient(105deg, #302C4D 0%, #4c4585 100%);
+        border: none;
+        border-radius: 2rem;
+        padding: 0.75rem 1rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+        letter-spacing: 0.2px;
+        transition: all 0.25s ease;
+        box-shadow: 0 8px 18px rgba(48, 44, 77, 0.2);
+        color: white;
+    }
+    
+    .btn-register:hover {
+        background: linear-gradient(105deg, #23203b 0%, #3d3670 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 22px rgba(48, 44, 77, 0.3);
+    }
+    
+    .btn-register:active {
+        transform: translateY(1px);
+    }
+    
+    /* Links */
+    .link-primary {
+        color: #E66239;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    
+    .link-primary:hover {
+        color: #c24d2a;
+        text-decoration: underline;
+    }
+    
+    /* Checkbox */
+    .form-check-input:checked {
+        background-color: #E66239;
+        border-color: #E66239;
+    }
+    
+    .form-check-input:focus {
+        border-color: #E66239;
+        box-shadow: 0 0 0 0.2rem rgba(230, 98, 57, 0.25);
+    }
+    
+    /* Form Text */
+    .form-text {
+        font-size: 0.7rem;
+        color: #6c7a8a;
+        margin-top: 0.3rem;
+    }
+    
+    /* Demo Hint */
+    .demo-hint {
+        font-size: 0.7rem;
+        text-align: center;
+        margin-top: 1rem;
+        color: #94a3b8;
+    }
+    
+    hr {
+        opacity: 0.4;
+    }
+    
+    /* Toast Message Animation */
+    .custom-alert-toast {
+        animation: slideDownFade 0.25s ease-out forwards;
+        font-family: 'Inter', sans-serif;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        border-radius: 40px !important;
+        letter-spacing: -0.2px;
+        backdrop-filter: blur(12px);
+        background: rgba(255,255,245,0.96);
+        border-left: 4px solid;
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        min-width: 280px;
+        max-width: 90%;
+        padding: 0.75rem 1.25rem;
+        font-weight: 500;
+        font-size: 0.85rem;
+    }
+    
+    .alert-success.custom-alert-toast {
+        border-left-color: #10b981;
+        background: rgba(236, 253, 245, 0.96);
+        color: #0e6245;
+    }
+    
+    .alert-danger.custom-alert-toast {
+        border-left-color: #ef4444;
+        background: rgba(254, 226, 226, 0.96);
+        color: #b91c1c;
+    }
+    
+    @keyframes slideDownFade {
+        0% {
+            opacity: 0;
+            transform: translate(-50%, -20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .register-card .card-body {
+            padding: 1.5rem !important;
+        }
+        
+        h1 {
+            font-size: 1.4rem;
+        }
+        
+        .brand-text {
+            font-size: 1.2rem;
+        }
+    }
+
+    .logo-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-img {
+    width: 120px;   /* adjust as needed */
+    height: auto;
+    display: block;
+}
+</style>
+
+<div class="register-wrapper">
+    <div class="card register-card">
+        <div class="card-body">
+            <!-- Logo & Brand header -->
+           <div class="text-center mb-4">
+    <div class="logo-wrapper">
+        <img 
+            src="{{ url_for('static', filename='images/logo.png') }}" 
+            alt="Dhami Electronics"
+            class="logo-img"
+            onerror="this.onerror=null; this.src='https://via.placeholder.com/150x50?text=DE'"
+        >
+    </div>
+
+    <h1 class="card-title mt-3 mb-1 h3 fw-semibold">Welcome back</h1>
+    <p class="text-muted small mb-0">Sign in to your account</p>
+</div>
+
+            <!-- Registration Form -->
+            <form method="POST" id="registerForm">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" 
+                           name="username" placeholder="Choose a username" required autofocus>
+                    <div class="invalid-feedback">Please enter a username</div>
+                    <!-- <div class="valid-feedback">Looks good!</div> -->
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="email" 
+                           name="email" placeholder="Enter your email" required>
+                    <div class="invalid-feedback">Please enter a valid email address</div>
+                    <div class="valid-feedback">Valid email!</div>
+                    <div class="form-text">We'll send a verification code to this email</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" 
+                           name="password" placeholder="Create a password" required minlength="6">
+                    <div class="invalid-feedback">Password must be at least 6 characters</div>
+                    <div class="valid-feedback">Strong enough</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirm password</label>
+                    <input type="password" class="form-control" id="confirmPassword" 
+                           name="confirmPassword" placeholder="Repeat password" required>
+                    <div class="invalid-feedback" id="confirmFeedback">Passwords must match</div>
+                    <div class="valid-feedback">Passwords match</div>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="terms" required>
+                    <label class="form-check-label small" for="terms">
+                        I agree to the <a href="{{ url_for('about') }}" class="link-primary text-decoration-none">terms and privacy policy</a>
+                    </label>
+                    <div class="invalid-feedback">You must accept terms to continue</div>
+                </div>
+
+                <button type="submit" class="btn btn-register w-100 py-2" id="registerBtn">
+                    Create account
+                </button>
+            </form>
+
+            <div class="text-center mt-4 small text-muted">
+                Already have an account? 
+                <a href="{{ url_for('login') }}" class="link-primary fw-semibold">Sign in</a>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    
+    // DOM elements
+    const form = document.getElementById('registerForm');
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const confirmInput = document.getElementById('confirmPassword');
+    const termsCheckbox = document.getElementById('terms');
+    const registerBtn = document.getElementById('registerBtn');
+    const confirmFeedbackDiv = document.getElementById('confirmFeedback');
+    
+    // Helper: show toast message
+    function showMessage(message, isError = false) {
+        const existingAlert = document.querySelector('.custom-alert-toast');
+        if (existingAlert) existingAlert.remove();
+        
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `custom-alert-toast alert ${isError ? 'alert-danger' : 'alert-success'}`;
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close btn-sm float-end" style="background: transparent; position: relative; top: -2px;" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div style="clear: both;"></div>
+        `;
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            if (alertDiv && alertDiv.remove) alertDiv.remove();
+        }, 3000);
+        
+        const closeBtn = alertDiv.querySelector('.btn-close');
+        if (closeBtn) closeBtn.addEventListener('click', () => alertDiv.remove());
+    }
+    
+    // Reset validation styles
+    function resetFieldValidation() {
+        [usernameInput, emailInput, passwordInput, confirmInput, termsCheckbox].forEach(field => {
+            if (field.type !== 'checkbox') {
+                field.classList.remove('is-invalid', 'is-valid');
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+    }
+    
+    // Validate password match
+    function validatePasswordMatch() {
+        const passwordVal = passwordInput.value;
+        const confirmVal = confirmInput.value;
+        
+        if (confirmVal === "") {
+            confirmInput.classList.remove('is-valid', 'is-invalid');
+            confirmInput.setCustomValidity('');
+            if (confirmFeedbackDiv) confirmFeedbackDiv.innerText = 'Passwords must match';
+            return false;
+        }
+        
+        if (passwordVal === confirmVal && passwordVal.length >= 6) {
+            confirmInput.classList.add('is-valid');
+            confirmInput.classList.remove('is-invalid');
+            confirmInput.setCustomValidity('');
+            if (confirmFeedbackDiv) confirmFeedbackDiv.innerText = 'Passwords match';
+            return true;
+        } else {
+            confirmInput.classList.add('is-invalid');
+            confirmInput.classList.remove('is-valid');
+            confirmInput.setCustomValidity('Passwords do not match');
+            if (confirmFeedbackDiv) confirmFeedbackDiv.innerText = 'Passwords do not match';
+            return false;
+        }
+    }
+    
+    // Real-time username validation
+    usernameInput.addEventListener('input', function() {
+        if (usernameInput.value.trim() !== "") {
+            usernameInput.classList.add('is-valid');
+            usernameInput.classList.remove('is-invalid');
+        } else {
+            usernameInput.classList.remove('is-valid');
+            if (usernameInput.value.length > 0) usernameInput.classList.add('is-invalid');
+            else usernameInput.classList.remove('is-invalid');
+        }
+    });
+    
+    // Real-time email validation
+    emailInput.addEventListener('input', function() {
+        const emailVal = emailInput.value.trim();
+        const emailPattern = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+        if (emailVal === "") {
+            emailInput.classList.remove('is-valid', 'is-invalid');
+        } else if (emailPattern.test(emailVal)) {
+            emailInput.classList.add('is-valid');
+            emailInput.classList.remove('is-invalid');
+        } else {
+            emailInput.classList.add('is-invalid');
+            emailInput.classList.remove('is-valid');
+        }
+    });
+    
+    // Real-time password validation
+    passwordInput.addEventListener('input', function() {
+        if (passwordInput.value.length >= 6) {
+            passwordInput.classList.add('is-valid');
+            passwordInput.classList.remove('is-invalid');
+        } else {
+            passwordInput.classList.remove('is-valid');
+            if (passwordInput.value.length > 0) passwordInput.classList.add('is-invalid');
+            else passwordInput.classList.remove('is-invalid');
+        }
+        if (confirmInput.value.length > 0) validatePasswordMatch();
+    });
+    
+    // Real-time confirm password validation
+    confirmInput.addEventListener('input', function() {
+        validatePasswordMatch();
+    });
+    
+    // Terms checkbox change
+    termsCheckbox.addEventListener('change', function() {
+        if (termsCheckbox.checked) {
+            termsCheckbox.classList.remove('is-invalid');
+        }
+    });
+    
+    // Form submission
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        resetFieldValidation();
+        let isValid = true;
+        
+        // Username validation
+        const usernameVal = usernameInput.value.trim();
+        if (!usernameVal) {
+            usernameInput.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            usernameInput.classList.add('is-valid');
+        }
+        
+        // Email validation
+        const emailVal = emailInput.value.trim();
+        const emailPattern = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+        if (!emailVal) {
+            emailInput.classList.add('is-invalid');
+            isValid = false;
+        } else if (!emailPattern.test(emailVal)) {
+            emailInput.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            emailInput.classList.add('is-valid');
+        }
+        
+        // Password validation
+        const passVal = passwordInput.value;
+        if (!passVal || passVal.length < 6) {
+            passwordInput.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            passwordInput.classList.add('is-valid');
+        }
+        
+        // Confirm password match
+        const matchOk = validatePasswordMatch();
+        if (!matchOk || confirmInput.value === "") {
+            isValid = false;
+        }
+        
+        // Terms checkbox
+        if (!termsCheckbox.checked) {
+            termsCheckbox.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            termsCheckbox.classList.remove('is-invalid');
+        }
+        
+        if (isValid) {
+            // Disable button and show loading
+            const originalText = registerBtn.innerHTML;
+            registerBtn.disabled = true;
+            registerBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Creating account...';
+            
+            showMessage(`🎉 Welcome ${usernameVal}! Account created successfully. Redirecting...`, false);
+            
+            // Submit the form
+            setTimeout(() => {
+                form.submit();
+            }, 500);
+        } else {
+            showMessage('⚠️ Please check the form for errors (username, email, password, terms).', true);
+            
+            // Focus on first invalid field
+            if (usernameInput.classList.contains('is-invalid')) usernameInput.focus();
+            else if (emailInput.classList.contains('is-invalid')) emailInput.focus();
+            else if (passwordInput.classList.contains('is-invalid')) passwordInput.focus();
+            else if (confirmInput.classList.contains('is-invalid')) confirmInput.focus();
+            else if (!termsCheckbox.checked) termsCheckbox.focus();
+        }
+    });
+    
+    // Initial clean state
+    form.classList.remove('was-validated');
+    [usernameInput, emailInput, passwordInput, confirmInput].forEach(inp => {
+        inp.classList.remove('is-valid', 'is-invalid');
+    });
+})();
+</script>
+
+<!-- Add spinner styles -->
+<style>
+    .spinner-border-sm {
+        width: 1rem;
+        height: 1rem;
+        border-width: 0.2em;
+    }
+    .btn-close {
+        opacity: 0.7;
+        background: transparent;
+        font-size: 0.8rem;
+    }
+    .btn-close:hover {
+        opacity: 1;
+    }
+    .form-check-input.is-invalid {
+        border-color: #dc3545;
+    }
+    .card-body {
+        background: transparent;
+    }
+    .btn-register:disabled {
+        opacity: 0.7;
+        transform: none;
+    }
+    ::placeholder {
+        color: #a0afc0;
+        font-size: 0.85rem;
+    }
+</style>
+{% endblock %}

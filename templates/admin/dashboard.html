@@ -1,0 +1,976 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Simple & Clean E-commerce Design - Full Width for Admin Dashboard */
+    .main-content .container {
+        max-width: 100%;
+        padding-left: 0;
+        padding-right: 0;
+        margin: 0;
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* Make main content area flexible to push footer down */
+    .main-content .container > div:not(.footer) {
+        flex: 1;
+    }
+    
+    /* Modern Gradient Background for Content Area */
+    .content-area {
+        background: linear-gradient(135deg, #f6f9fc 0%, #eef2f5 100%);
+        padding: 20px 0 40px 0;
+    }
+    
+    :root {
+        --primary: #2874f0;
+        --secondary: #fb641b;
+        --dark: #212121;
+        --light: #f5f5f5;
+        --gray: #878787;
+        --white: #ffffff;
+    }
+    
+    /* Section Header */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 0 20px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 0;
+        position: relative;
+        padding-left: 12px;
+    }
+    
+    .section-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 18px;
+        background: #E66239;
+        border-radius: 2px;
+    }
+    
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        padding: 0 20px;
+        margin-bottom: 24px;
+    }
+    
+    /* Stat Cards */
+    .stat-card {
+        background: var(--white);
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        padding: 16px 20px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+    
+    .stat-info {
+        flex: 1;
+    }
+    
+    .stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 4px;
+        line-height: 1.2;
+    }
+    
+    .stat-label {
+        font-size: 0.7rem;
+        font-weight: 500;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+    }
+    
+    .stat-icon.products { background: #e3f2fd; color: #2196f3; }
+    .stat-icon.users { background: #e8f5e9; color: #4caf50; }
+    .stat-icon.orders { background: #e0f7fa; color: #00bcd4; }
+    .stat-icon.pending { background: #fff3e0; color: #ff9800; }
+    
+    /* Dashboard Grid */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        padding: 0 20px;
+        margin-bottom: 24px;
+    }
+    
+    /* Cards */
+    .dashboard-card {
+        background: var(--white);
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+    }
+    
+    .card-header-custom {
+        padding: 14px 20px;
+        background: #fafcff;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .card-header-custom h4 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .card-header-custom h4 i {
+        color: #E66239;
+        font-size: 0.9rem;
+    }
+    
+    .card-body-custom {
+        padding: 16px 20px;
+    }
+    
+    /* Quick Actions Buttons */
+    .quick-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    
+    .action-btn {
+        padding: 8px 18px;
+        border-radius: 2rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+    }
+    
+    .action-btn-primary {
+        background: linear-gradient(105deg, #302C4D 0%, #4c4585 100%);
+        color: white;
+    }
+    
+    .action-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(48, 44, 77, 0.25);
+        color: white;
+    }
+    
+    .action-btn-secondary {
+        background: #f1f5f9;
+        color: var(--dark);
+    }
+    
+    .action-btn-secondary:hover {
+        background: #e2e8f0;
+        transform: translateY(-2px);
+    }
+    
+    /* Recent Orders List */
+    .recent-orders-list {
+        max-height: 280px;
+        overflow-y: auto;
+    }
+    
+    .recent-order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #e2e8f0;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    
+    .recent-order-item:last-child {
+        border-bottom: none;
+    }
+    
+    .recent-order-item:hover {
+        background: #f8fafc;
+        padding-left: 8px;
+    }
+    
+    .order-info h5 {
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+        color: var(--dark);
+    }
+    
+    .order-info p {
+        font-size: 0.7rem;
+        margin: 0;
+        color: var(--gray);
+    }
+    
+    .order-status {
+        padding: 4px 10px;
+        border-radius: 2rem;
+        font-size: 0.65rem;
+        font-weight: 600;
+    }
+    
+    .status-pending {
+        background: #fef3c7;
+        color: #d97706;
+    }
+    
+    .status-delivered {
+        background: #ecfdf5;
+        color: #10b981;
+    }
+    
+    .status-processing {
+        background: #e0f2fe;
+        color: #0284c7;
+    }
+    
+    .status-shipped {
+        background: #e0f2fe;
+        color: #0284c7;
+    }
+    
+    .status-cancelled {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+    
+    /* Tables */
+    .table-container {
+        overflow-x: auto;
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.75rem;
+    }
+    
+    .data-table th {
+        text-align: left;
+        padding: 12px 12px;
+        background: #f8fafc;
+        font-weight: 600;
+        color: var(--dark);
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .data-table td {
+        padding: 12px 12px;
+        border-bottom: 1px solid #e2e8f0;
+        color: var(--gray);
+        vertical-align: middle;
+    }
+    
+    .data-table tr:hover td {
+        background: #fafcff;
+    }
+    
+    .product-img-thumb {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 0.5rem;
+        border: 1px solid #e2e8f0;
+        padding: 2px;
+    }
+    
+    .table-actions {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    
+    .table-btn {
+        padding: 4px 10px;
+        border-radius: 2rem;
+        font-size: 0.65rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.2s;
+        cursor: pointer;
+        border: none;
+    }
+    
+    .table-btn-warning {
+        background: #fef3c7;
+        color: #d97706;
+    }
+    
+    .table-btn-warning:hover {
+        background: #fde68a;
+        color: #b45309;
+    }
+    
+    .table-btn-danger {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+    
+    .table-btn-danger:hover {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+    
+    .table-btn-info {
+        background: #e0f2fe;
+        color: #0284c7;
+    }
+    
+    .table-btn-info:hover {
+        background: #bae6fd;
+        color: #0369a1;
+    }
+    
+    .badge-verified {
+        background: #ecfdf5;
+        color: #10b981;
+        padding: 4px 8px;
+        border-radius: 2rem;
+        font-size: 0.65rem;
+        font-weight: 600;
+    }
+    
+    .badge-not-verified {
+        background: #fef2f2;
+        color: #dc2626;
+        padding: 4px 8px;
+        border-radius: 2rem;
+        font-size: 0.65rem;
+        font-weight: 600;
+    }
+    
+    .badge-admin-yes {
+        background: #e0f2fe;
+        color: #0284c7;
+        padding: 4px 8px;
+        border-radius: 2rem;
+        font-size: 0.65rem;
+        font-weight: 600;
+    }
+    
+    .badge-admin-no {
+        background: #f1f5f9;
+        color: #64748b;
+        padding: 4px 8px;
+        border-radius: 2rem;
+        font-size: 0.65rem;
+        font-weight: 600;
+    }
+    
+    /* Footer */
+    .footer {
+        background-color: #18282b;
+        color: #ffffff;
+        width: 100%;
+        margin-top: auto;
+        padding: 0;
+    }
+    
+    .footer .footer-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 15px 20px 12px 20px;
+    }
+    
+    .footer h5 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+    
+    .footer p {
+        font-size: 0.7rem;
+        margin-bottom: 4px;
+        line-height: 1.4;
+        opacity: 0.8;
+    }
+    
+    .footer ul {
+        margin-bottom: 0;
+        padding-left: 0;
+    }
+    
+    .footer ul li {
+        margin-bottom: 4px;
+        list-style: none;
+    }
+    
+    .footer ul li a {
+        font-size: 0.7rem;
+        color: #a0a0a0;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+    
+    .footer ul li a:hover {
+        color: #f39c12;
+        padding-left: 3px;
+    }
+    
+    .footer .social-links {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    
+    .footer .social-icon {
+        width: 28px;
+        height: 28px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        color: white;
+        text-decoration: none;
+        font-size: 0.8rem;
+    }
+    
+    .footer .social-icon:hover {
+        background: #f39c12;
+        transform: translateY(-2px);
+    }
+    
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 0 15px;
+        }
+        
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+            padding: 0 15px;
+        }
+        
+        .section-header {
+            padding: 0 15px;
+        }
+        
+        .stat-number {
+            font-size: 1.4rem;
+        }
+        
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1.1rem;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 8px 8px;
+        }
+        
+        .table-btn {
+            padding: 3px 8px;
+            font-size: 0.6rem;
+        }
+        
+        .footer .footer-container {
+            padding: 12px 15px 10px 15px;
+        }
+        
+        .footer .col-md-4 {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        
+        .footer .col-md-4:last-child {
+            margin-bottom: 0;
+        }
+        
+        .footer .social-links {
+            justify-content: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .table-actions {
+            flex-direction: column;
+        }
+        
+        .table-btn {
+            text-align: center;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="content-area">
+    <div class="section-header">
+        <h2 class="section-title">Admin Dashboard</h2>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-info">
+                <div class="stat-number">{{ products|length }}</div>
+                <div class="stat-label">Total Products</div>
+            </div>
+            <div class="stat-icon products">
+                <i class="fas fa-box"></i>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-info">
+                <div class="stat-number">{{ users|length }}</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-icon users">
+                <i class="fas fa-users"></i>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-info">
+                <div class="stat-number">{{ orders|length }}</div>
+                <div class="stat-label">Total Orders</div>
+            </div>
+            <div class="stat-icon orders">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-info">
+                <div class="stat-number">{{ pending_orders }}</div>
+                <div class="stat-label">Pending Orders</div>
+            </div>
+            <div class="stat-icon pending">
+                <i class="fas fa-clock"></i>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions & Recent Orders -->
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
+            <div class="card-header-custom">
+                <h4><i class="fas fa-bolt"></i> Quick Actions</h4>
+            </div>
+            <div class="card-body-custom">
+                <div class="quick-actions">
+                    <a href="{{ url_for('add_product') }}" class="action-btn action-btn-primary">
+                        <i class="fas fa-plus"></i> Add Product
+                    </a>
+                    <a href="{{ url_for('admin_orders') }}" class="action-btn action-btn-secondary">
+                        <i class="fas fa-eye"></i> View Orders
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-card">
+            <div class="card-header-custom">
+                <h4><i class="fas fa-clock"></i> Recent Orders</h4>
+            </div>
+            <div class="card-body-custom">
+                {% if orders %}
+                <div class="recent-orders-list">
+                    {% for order in orders[:3] %}
+                    <a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="recent-order-item">
+                        <div class="order-info">
+                            <h5>Order #{{ order.id }}</h5>
+                            <p>{{ order.user.username }} • NPR {{ "%.0f"|format(order.total_amount) }}</p>
+                        </div>
+                        <span class="order-status status-{{ order.status|lower }}">
+                            {{ order.status|capitalize }}
+                        </span>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p style="font-size: 0.75rem; color: var(--gray); text-align: center; margin: 0;">No orders yet</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Products Table -->
+    <div class="dashboard-card" style="margin: 0 20px 24px 20px;">
+        <div class="card-header-custom">
+            <h4><i class="fas fa-box"></i> Manage Products</h4>
+        </div>
+        <div class="card-body-custom">
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr id="product-row-{{ product.id }}">
+                            <td>{{ product.id }}</td>
+                            <td>
+                                {% if product.image %}
+                                    <img src="{{ url_for('static', filename='uploads/' + product.image) }}" class="product-img-thumb" alt="{{ product.name }}">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/40x40?text=No+Img" class="product-img-thumb" alt="No image">
+                                {% endif %}
+                            </td>
+                            <td>{{ product.name[:35] }}{% if product.name|length > 35 %}...{% endif %}</td>
+                            <td>NPR {{ "%.0f"|format(product.price) }}</td>
+                            <td>{{ product.stock }}</td>
+                            <td>{{ product.category }}</td>
+                            <td>
+                                <div class="table-actions">
+                                    <a href="{{ url_for('edit_product', id=product.id) }}" class="table-btn table-btn-warning">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <button class="table-btn table-btn-danger delete-product-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Users Table -->
+    <div class="dashboard-card" style="margin: 0 20px 24px 20px;">
+        <div class="card-header-custom">
+            <h4><i class="fas fa-users"></i> Manage Users</h4>
+        </div>
+        <div class="card-body-custom">
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Verified</th>
+                            <th>Admin</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr id="user-row-{{ user.id }}">
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email[:25] }}{% if user.email|length > 25 %}...{% endif %}</td>
+                            <td>
+                                {% if user.is_verified %}
+                                    <span class="badge-verified"><i class="fas fa-check-circle"></i> Verified</span>
+                                {% else %}
+                                    <span class="badge-not-verified"><i class="fas fa-times-circle"></i> Not Verified</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.is_admin %}
+                                    <span class="badge-admin-yes"><i class="fas fa-shield-alt"></i> Admin</span>
+                                {% else %}
+                                    <span class="badge-admin-no"><i class="fas fa-user"></i> User</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="table-actions">
+                                    {% if not user.is_admin %}
+                                        <button class="table-btn table-btn-info make-admin-btn" data-user-id="{{ user.id }}" data-username="{{ user.username }}">
+                                            <i class="fas fa-user-shield"></i> Make Admin
+                                        </button>
+                                    {% else %}
+                                        {% if user.id != current_user.id %}
+                                            <button class="table-btn table-btn-warning remove-admin-btn" data-user-id="{{ user.id }}" data-username="{{ user.username }}">
+                                                <i class="fas fa-user-minus"></i> Remove Admin
+                                            </button>
+                                        {% else %}
+                                            <span style="font-size: 0.65rem; color: var(--gray);"><i class="fas fa-user-check"></i> Current Admin</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Dhami Electronics</h5>
+                <p>Your one-stop shop for premium electronics.</p>
+                <p><i class="fas fa-map-marker-alt me-1"></i> Dhangadhi, Nepal</p>
+                <p><i class="fas fa-envelope me-1"></i> support@dhamielectronics.com</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Quick Links</h5>
+                <ul>
+                        <li><a href="{{ url_for('about') }}">About Us</a></li>
+    <li><a href="{{ url_for('returns_policy') }}">Returns Policy</a></li>
+    <li><a href="{{ url_for('privacy_policy') }}">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Follow Us</h5>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+                <p class="mt-2"><i class="fas fa-truck"></i> Free Shipping on orders above NPR 5000</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Confirmation Modal for Admin Actions -->
+<div class="modal fade" id="confirmModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 1rem;">
+            <div class="modal-header" id="modalHeader" style="border-bottom: 1px solid #e2e8f0;">
+                <h5 class="modal-title" style="font-size: 0.9rem;">
+                    <span id="modalTitle">Confirm Action</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <p id="confirmMessage" style="font-size: 0.85rem; margin-bottom: 8px;">Are you sure you want to perform this action?</p>
+                <p id="warningMessage" style="font-size: 0.7rem; color: #dc2626;"></p>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid #e2e8f0; padding: 12px 20px;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="font-size: 0.75rem; padding: 6px 14px; border-radius: 2rem;">
+                    Cancel
+                </button>
+                <button type="button" class="btn" id="confirmActionBtn" style="font-size: 0.75rem; padding: 6px 14px; border-radius: 2rem;">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ========== PRODUCT DELETE WITH SWEETALERT ==========
+    document.querySelectorAll('.delete-product-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const productId = this.getAttribute('data-product-id');
+            const productName = this.getAttribute('data-product-name');
+            
+            Swal.fire({
+                title: 'Delete Product?',
+                html: `Are you sure you want to delete <strong>"${productName}"</strong>?`,
+                text: 'This action cannot be undone!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: '<i class="fas fa-trash"></i> Yes, Delete',
+                cancelButtonText: '<i class="fas fa-times"></i> Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading state
+                    Swal.fire({
+                        title: 'Deleting...',
+                        text: 'Please wait',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    
+                    // Make AJAX call to delete product
+                    fetch(`/admin/delete_product/${productId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove the row from table
+                            const row = document.getElementById(`product-row-${productId}`);
+                            if (row) {
+                                row.style.transition = 'all 0.3s ease';
+                                row.style.opacity = '0';
+                                setTimeout(() => {
+                                    row.remove();
+                                    
+                                    // Update product count in stats
+                                    const productCountSpan = document.querySelector('.stat-card:first-child .stat-number');
+                                    if (productCountSpan) {
+                                        const currentCount = parseInt(productCountSpan.innerText);
+                                        productCountSpan.innerText = currentCount - 1;
+                                    }
+                                }, 300);
+                            }
+                            
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: data.message || `"${productName}" has been deleted successfully.`,
+                                confirmButtonColor: '#10b981',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: data.error || 'Failed to delete product',
+                                confirmButtonColor: '#dc2626'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Something went wrong. Please try again.',
+                            confirmButtonColor: '#dc2626'
+                        });
+                    });
+                }
+            });
+        });
+    });
+    
+    // ========== ADMIN ACTIONS WITH MODAL ==========
+    let selectedUserId = null;
+    let selectedUsername = null;
+    let currentAction = null;
+    
+    const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    const modalTitle = document.getElementById('modalTitle');
+    const modalHeader = document.getElementById('modalHeader');
+    const confirmMessage = document.getElementById('confirmMessage');
+    const warningMessage = document.getElementById('warningMessage');
+    const confirmActionBtn = document.getElementById('confirmActionBtn');
+    
+    // Make Admin buttons
+    document.querySelectorAll('.make-admin-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            selectedUserId = this.getAttribute('data-user-id');
+            selectedUsername = this.getAttribute('data-username');
+            currentAction = 'make';
+            
+            modalHeader.style.borderBottomColor = '#10b981';
+            modalTitle.innerHTML = '<i class="fas fa-user-shield" style="color: #10b981;"></i> Make Admin';
+            confirmMessage.innerHTML = `Make <strong>${selectedUsername}</strong> an admin?`;
+            warningMessage.innerHTML = '⚠️ This will give the user full admin privileges.';
+            confirmActionBtn.className = 'btn btn-success';
+            confirmActionBtn.innerHTML = '<i class="fas fa-check"></i> Yes, Make Admin';
+            
+            confirmModal.show();
+        });
+    });
+    
+    // Remove Admin buttons
+    document.querySelectorAll('.remove-admin-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            selectedUserId = this.getAttribute('data-user-id');
+            selectedUsername = this.getAttribute('data-username');
+            currentAction = 'remove';
+            
+            modalHeader.style.borderBottomColor = '#dc2626';
+            modalTitle.innerHTML = '<i class="fas fa-user-minus" style="color: #dc2626;"></i> Remove Admin';
+            confirmMessage.innerHTML = `Remove admin privileges from <strong>${selectedUsername}</strong>?`;
+            warningMessage.innerHTML = '⚠️ This user will lose access to the admin panel.';
+            confirmActionBtn.className = 'btn btn-danger';
+            confirmActionBtn.innerHTML = '<i class="fas fa-check"></i> Yes, Remove Admin';
+            
+            confirmModal.show();
+        });
+    });
+    
+    // Confirm action
+    confirmActionBtn.addEventListener('click', function() {
+        if (selectedUserId) {
+            if (currentAction === 'make') {
+                window.location.href = '/admin/make_admin/' + selectedUserId;
+            } else if (currentAction === 'remove') {
+                window.location.href = '/admin/remove_admin/' + selectedUserId;
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
